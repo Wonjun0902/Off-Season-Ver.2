@@ -1,4 +1,4 @@
-package frc.robot.HardWare;
+package frc.robot.AutoTune.HardWare;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;

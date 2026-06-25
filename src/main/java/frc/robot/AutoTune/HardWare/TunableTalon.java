@@ -1,4 +1,4 @@
-package frc.robot.HardWare;
+package frc.robot.AutoTune.HardWare;
 
 public class TunableTalon implements TunableMotor{
 
