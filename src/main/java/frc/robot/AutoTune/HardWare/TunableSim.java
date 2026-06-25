@@ -1,5 +1,5 @@
 package frc.robot.AutoTune.HardWare;
 
-public class TunableSim {
+public class TunableSim implements TunableMotor{
 
 }
