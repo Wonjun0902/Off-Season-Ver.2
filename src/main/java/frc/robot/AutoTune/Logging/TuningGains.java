@@ -1,5 +1,5 @@
 package frc.robot.AutoTune.Logging;
 
-public class Logger {
+public class TuningGains {
 
 }
