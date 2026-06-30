@@ -8,17 +8,13 @@ import edu.wpi.first.units.measure.Voltage;
 
 public interface TunableMotor {
 
-    public void setMotorSpeedRadPerSec();
-
-    public void setMotorSpeedRotPerSec();
-
-    public void setMotorVoltage();
+    public void setMotorVoltage(double volts);
 
     public void setMotorCurrent();
 
     public void stopMotor();
 
-    public AngularVelocity getMotorVelocityRadPerSec();
+    public AngularVelocity getMotorSpeed();
 
     public Angle getMotorPosition();
 
