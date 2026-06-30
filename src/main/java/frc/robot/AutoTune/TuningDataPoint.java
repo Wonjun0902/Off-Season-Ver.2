@@ -2,11 +2,10 @@ package frc.robot.AutoTune;
 
 public record TuningDataPoint(
     double timestamp,
-    double posRad,
-    double posRot,
+    double position,
     double statorCurrent,
     double appliedVolts,
-    double angularVelocityRadPerSec,
-    double angularVelocityRotPerSec
+    double angularVelocityRotPerSec,
+    double anngularAccRotPerSecPerSec
 ){
 }
