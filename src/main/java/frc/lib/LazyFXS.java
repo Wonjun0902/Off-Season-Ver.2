@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -19,12 +20,14 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class LazyFXS implements LazyCTRE {
     private TalonFXS motor, follower;
     private CANcoder canCoder;
     private boolean enableFOC = true;
+    private Voltage inpuVoltage;
 
     private final MotionMagicVoltage mmPosVoltage = new MotionMagicVoltage(0.0).withEnableFOC(this.enableFOC);
     private final MotionMagicExpoVoltage mmPosExpVoltage = new MotionMagicExpoVoltage(0.0).withEnableFOC(this.enableFOC);
@@ -32,6 +35,7 @@ public class LazyFXS implements LazyCTRE {
     private final VelocityTorqueCurrentFOC velTFOC = new VelocityTorqueCurrentFOC(0.0);
     private final PositionVoltage posVoltage = new PositionVoltage(0.0).withEnableFOC(this.enableFOC);
     private final VelocityVoltage velVoltage = new VelocityVoltage(0.0).withEnableFOC(this.enableFOC);
+    private final VoltageOut voltageOut = new VoltageOut(inpuVoltage);
 
     public LazyFXS(int motorID, String canBus, TalonFXSConfiguration configuration, int followID, String followCanBus,
             TalonFXSConfiguration followConfiguration, MotorAlignmentValue followerInverted, int canCoderID,
@@ -63,6 +67,11 @@ public class LazyFXS implements LazyCTRE {
             }
         }        
     motor.setNeutralMode(NeutralModeValue.Brake);
+    }
+
+    @Override
+    public void setVoltageControl(Voltage inputVoltage){
+        this.motor.setControl(voltageOut.withOutput(inputVoltage));
     }
 
     @Override

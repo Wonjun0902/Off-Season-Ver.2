@@ -7,8 +7,17 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 
 public interface LazyCTRE {
+
+    /**
+     * Sets the motor to a certain voltage. 
+     * Only inputs voltage, no target position, target Velocity whatsoever. 
+     * @param inputVoltage
+     */
+    void setVoltageControl(Voltage inpuVoltage);
+    
     /**
      * Sets the target position for the motor using Motion Magic Position Voltage
      * control
