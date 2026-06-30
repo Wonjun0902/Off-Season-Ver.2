@@ -22,4 +22,7 @@ For the Analyzing Classes. I will have them to calculate the gains, also seperat
 For the output class, it will push the data to NetworkTables or directly apply the configs to TalonFX slot configs
 For Sim, purely for testing stuffs using simulating features.
 
+Motor Execution Details:
+- As I think tuning all the motors one by one takes a lot of time even for a auto tuner, I don't think there will be much of a difference than tuning every subsystem manually as I did this season. I want to have the code to execute ever motor to run by itself. For example, for the 2026 Season Bot, I will have the code to execute an analysis of Torque Current FOC for the Flywheel, execute analysis of Pure MMExpo for Intake, and all the other subsystem to run by itself for timesaving. For subsystems such as the deployer, I will have special features such as soft limits and hard limits and special methods of tuning than other basic free-spinning subsystems. 
+
 I hope it works!🤖🤖
