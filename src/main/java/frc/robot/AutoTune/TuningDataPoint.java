@@ -1,5 +1,12 @@
 package frc.robot.AutoTune;
 
-public class TuningDataPoint {
-
+public record TuningDataPoint(
+    double timestamp,
+    double posRad,
+    double posRot,
+    double statorCurrent,
+    double appliedVolts,
+    double angularVelocityRadPerSec,
+    double angularVelocityRotPerSec
+){
 }
