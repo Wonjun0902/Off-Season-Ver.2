@@ -12,6 +12,14 @@ import edu.wpi.first.units.measure.Voltage;
 public interface LazyCTRE {
 
     /**
+     * Sets the motor to a certain CURRENT 
+     * Only inputs current, no target position, target Velocity whatsoever.
+     * @param inputCurrent
+     * This is for Torque Current FOC Control Tuning 
+     */
+    void setCurrentControl(Current inputCurrent);
+
+    /**
      * Sets the motor to a certain voltage. 
      * Only inputs voltage, no target position, target Velocity whatsoever. 
      * @param inputVoltage

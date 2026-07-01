@@ -10,7 +10,7 @@ public interface TunableMotor {
 
     public void setMotorVoltage(double volts);
 
-    public void setMotorCurrent();
+    public void setMotorCurrent(double current);
 
     public void stopMotor();
 

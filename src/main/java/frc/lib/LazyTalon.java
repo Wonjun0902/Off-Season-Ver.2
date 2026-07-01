@@ -1,5 +1,7 @@
 package frc.lib;
 
+import java.util.function.ToDoubleBiFunction;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -8,6 +10,7 @@ import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -20,6 +23,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Torque;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -28,6 +32,7 @@ public class LazyTalon implements LazyCTRE {
     private CANcoder canCoder;
     private boolean enableFOC = true;
     private Voltage inputVoltage;
+    private Current inputCurrent;
 
     private final MotionMagicVoltage mmPosVoltage = new MotionMagicVoltage(0.0).withEnableFOC(this.enableFOC);
     private final MotionMagicExpoVoltage mmPosExpVoltage = new MotionMagicExpoVoltage(0.0).withEnableFOC(this.enableFOC);
@@ -36,7 +41,7 @@ public class LazyTalon implements LazyCTRE {
     private final PositionVoltage posVoltage = new PositionVoltage(0.0).withEnableFOC(this.enableFOC);
     private final VelocityVoltage velVoltage = new VelocityVoltage(0.0).withEnableFOC(this.enableFOC);
     private final VoltageOut voltageOut = new VoltageOut(inputVoltage);
-
+    private final TorqueCurrentFOC torqueCurrentFOC = new TorqueCurrentFOC(inputCurrent);
 
     public LazyTalon(int motorID, String canBus, TalonFXConfiguration configuration, int followID, String followCanBus,
             TalonFXConfiguration followConfiguration, MotorAlignmentValue followerInverted, int canCoderID,
@@ -68,6 +73,11 @@ public class LazyTalon implements LazyCTRE {
             }
         }        
     motor.setNeutralMode(NeutralModeValue.Brake);
+    }
+
+    @Override
+    public void setCurrentControl(Current inputCurrent){
+        this.motor.setControl(torqueCurrentFOC.withOutput(inputCurrent));
     }
 
     @Override
