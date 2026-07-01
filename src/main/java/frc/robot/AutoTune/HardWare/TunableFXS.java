@@ -1,32 +1,14 @@
 package frc.robot.AutoTune.HardWare;
 
 import frc.lib.LazyFXS;
-import frc.lib.LazyFXSBuilder;
-
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.TalonFXSConfiguration;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFXS;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import static edu.wpi.first.units.Units.Volts;
-import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.Amps;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.units.measure.Voltage;
 
 public class TunableFXS implements TunableMotor{
 
@@ -41,8 +23,38 @@ public class TunableFXS implements TunableMotor{
         m_motor.setVoltageControl(Volts.of(volts));
     }
 
-    //Note for MySelf 6/30
-    //I just added a method for VoltageOut Controls. I added one method in LazyCTRE so that I can do VoltageOut controls. 
-    //I need to figure out how to do current controls for Torque Current FOC 
-    //Add methods to LazyCTRE, LazyFXS, and LazyTalon if you figure out how to do Current controls 
+    @Override 
+    public void setMotorCurrent(double current){
+        m_motor.setCurrentControl(Amps.of(current));
+    }   
+
+    @Override 
+    public void stopMotor(){
+        m_motor.stop();
+    }
+
+    @Override
+    public AngularVelocity getMotorSpeed(){
+        return m_motor.getVelocity();
+    }
+
+    @Override 
+    public Angle getMotorPosition(){
+        return m_motor.getPosition();
+    }
+
+    @Override
+    public AngularAcceleration getAcceleration(){
+        return m_motor.getAcceleration();
+    }
+
+    @Override
+    public Current getCurrent(){
+        return m_motor.getStatorCurrent();
+    }
+
+    @Override 
+    public Voltage getVoltage(){
+        return m_motor.getStatorVoltage();
+    }
 }
