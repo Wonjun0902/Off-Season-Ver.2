@@ -158,6 +158,16 @@ public class LazyFXS implements LazyCTRE {
     }
 
     @Override
+    public Current getStatorCurrent() {
+        return this.motor.getStatorCurrent().getValue();
+    }
+
+    @Override
+    public Voltage getStatorVoltage() {
+        return this.motor.getMotorVoltage().getValue();
+    }
+
+    @Override
     public void updateTelemetry(MotorTelemetry telemetry) {
         telemetry.position = motor.getPosition().getValue();
         telemetry.velocity = motor.getVelocity().getValue();

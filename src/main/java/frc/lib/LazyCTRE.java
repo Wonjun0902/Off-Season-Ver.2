@@ -131,6 +131,18 @@ public interface LazyCTRE {
     AngularAcceleration getAcceleration();
 
     /**
+     * Gets the current stator current of the Motor in Amperes
+     * @return the current stator current
+     */
+    Current getStatorCurrent();
+
+    /**
+     * Gets the current stator voltage of the Motor in Volts
+     * @return the current stator voltage
+     */
+    Voltage getStatorVoltage();
+
+    /**
      * Updates the telemetry data for the motor
      * @param telemetry the telemetry object to update
      */
