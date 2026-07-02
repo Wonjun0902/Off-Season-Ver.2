@@ -1,7 +1,6 @@
 package frc.robot.AutoTune;
 
 import frc.robot.AutoTune.HardWare.TunableMotor;
-import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.units.measure.Angle;
@@ -100,6 +99,16 @@ public class MotorExecute {
 
         //4. Run the motor with given voltage
         m_motor.setMotorCurrent(current);
+    }
+
+    //For non-Position mech subsystems
+    public void setMotorVoltage(double current){
+        m_motor.setMotorCurrent(current);
+    }
+
+    //For non-position mech subsystems
+    public void setMotorCurrent(double volts){
+        m_motor.setMotorVoltage(volts);
     }
 
     //Added Gear Ratio
