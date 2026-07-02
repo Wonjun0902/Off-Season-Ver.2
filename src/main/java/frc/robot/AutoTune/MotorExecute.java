@@ -15,28 +15,22 @@ public class MotorExecute {
 
     private final TunableMotor m_motor;
     private final double m_gearRatio;
-    private final boolean m_isPositionMechanism;
 
     //For position mechanism subsystems
     private final Angle m_forwardSoftLimit;
     private final Angle m_reverseSoftLimit;
     private final DigitalInput m_hardLimitSwitch;
 
-    public MotorExecute(TunableMotor motor, double gearRatio, boolean isPositionMechanism, Angle forwardLimit, Angle reverseLimit, DigitalInput hardLimitSwitch){
+    public MotorExecute(TunableMotor motor, double gearRatio, Angle forwardLimit, Angle reverseLimit, DigitalInput hardLimitSwitch){
         this.m_motor = motor;
         this.m_gearRatio = gearRatio;
-        this.m_isPositionMechanism = isPositionMechanism;
         this.m_forwardSoftLimit = forwardLimit;
         this.m_reverseSoftLimit = reverseLimit;
         this.m_hardLimitSwitch = hardLimitSwitch;
     }
 
     public MotorExecute(TunableMotor motor, double gearRatio){
-        this(motor, gearRatio, false, Rotations.of(Double.POSITIVE_INFINITY), Rotations.of(Double.NEGATIVE_INFINITY), (DigitalInput) null);
-    }
-
-    public MotorExecute(TunableMotor motor, double gearRatio, Angle forwardLimit, Angle reverseLimit, DigitalInput hardLimitSwitch){
-        this(motor, gearRatio, true, forwardLimit, reverseLimit, hardLimitSwitch);
+        this(motor, gearRatio, Rotations.of(Double.POSITIVE_INFINITY), Rotations.of(Double.NEGATIVE_INFINITY), (DigitalInput) null);
     }
 
     /**
