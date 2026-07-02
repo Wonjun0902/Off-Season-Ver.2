@@ -3,6 +3,12 @@ package frc.robot.AutoTune;
 import frc.robot.AutoTune.HardWare.TunableMotor;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -40,4 +46,22 @@ public class MotorExecute {
      * So there will be new methods that consider the mechanism of the motor: free spin or position mechanism 
      */
 
+    // Voltage Control for Position Mechanism Subsystem
+    public void setMotorVoltagePOS(double volts){
+        //1. Set the voltage to the motor
+        m_motor.setMotorVoltage(volts);
+
+        //2. Get the current position 
+        Angle currentPos = m_motor.getMotorPosition();
+
+        //3. Check if the position is beyond the limits and stop the motor
+        if(currentPos.gt(m_forwardSoftLimit)){
+            m_motor.stopMotor();
+            SmartDashboard.putString("The Motor is beyond the limits: ","forward limit");
+        }
+        if(currentPos.lt(m_reverseSoftLimit)){
+            m_motor.stopMotor();
+            SmartDashboard.putString("The Motor is beyond the limits: ","reverse limit");
+        }
+    }
 }
