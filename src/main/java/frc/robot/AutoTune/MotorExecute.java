@@ -101,4 +101,32 @@ public class MotorExecute {
         //4. Run the motor with given voltage
         m_motor.setMotorCurrent(current);
     }
+
+    //Added Gear Ratio
+    public AngularVelocity getMotorSpeed(){
+        AngularVelocity currentVelocity = m_motor.getMotorSpeed();
+        return currentVelocity.div(m_gearRatio);
+    }
+
+    //Added Gear Ratio
+    public Angle getMotorPosition(){
+        Angle currentPosition = m_motor.getMotorPosition();
+        return currentPosition.div(m_gearRatio);
+    }
+
+    //Added Gear Ratio 
+    public AngularAcceleration getAcceleration(){
+        AngularAcceleration currentAcc = m_motor.getAcceleration();
+        return currentAcc.div(m_gearRatio);
+    }
+
+    //the same 
+    public Current getCurrent(){
+        return m_motor.getCurrent();
+    }
+
+    //the same 
+    public Voltage getVoltage(){
+        return m_motor.getVoltage();
+    }
 }
