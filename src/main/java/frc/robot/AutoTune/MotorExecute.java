@@ -48,20 +48,29 @@ public class MotorExecute {
 
     // Voltage Control for Position Mechanism Subsystem
     public void setMotorVoltagePOS(double volts){
-        //1. Set the voltage to the motor
-        m_motor.setMotorVoltage(volts);
-
-        //2. Get the current position 
+        //1. Check if the hard limit switch is on
+        if(m_hardLimitSwitch != null && m_hardLimitSwitch.get()){
+            m_motor.stopMotor();
+            SmartDashboard.putString("The motor is beyond limits: ", "HARD LIMIT");
+            throw new IllegalStateException("Motor Stopped: over hard limit");
+        }
+        //2. Gets the current motor position 
         Angle currentPos = m_motor.getMotorPosition();
 
-        //3. Check if the position is beyond the limits and stop the motor
-        if(currentPos.gt(m_forwardSoftLimit)){
+        //3. Check if the motor is beyond the soft limits 
+        if(volts > 0 && currentPos.gt(m_forwardSoftLimit)){
             m_motor.stopMotor();
-            SmartDashboard.putString("The Motor is beyond the limits: ","forward limit");
+            SmartDashboard.putString("The motor is beyond the limits: ", "forward soft limit");
+            return;
         }
-        if(currentPos.lt(m_reverseSoftLimit)){
+
+        if(volts < 0 && currentPos.lt(m_reverseSoftLimit)){
             m_motor.stopMotor();
-            SmartDashboard.putString("The Motor is beyond the limits: ","reverse limit");
+            SmartDashboard.putString("The motor is beyond the limits: ", "reverse soft limit");
+            return;
         }
+
+        //4. Run the motor with given voltage
+        m_motor.setMotorVoltage(volts);
     }
 }
