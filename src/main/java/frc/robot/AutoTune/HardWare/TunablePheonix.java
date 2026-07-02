@@ -10,11 +10,11 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 
-public class TunableFXS implements TunableMotor{
+public class TunablePheonix implements TunableMotor{
 
     private LazyFXS m_motor;
 
-    public TunableFXS(LazyFXS motor){
+    public TunablePheonix(LazyFXS motor){
         this.m_motor = motor;
     }
 

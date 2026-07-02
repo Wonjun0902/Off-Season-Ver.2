@@ -5,14 +5,9 @@ import frc.lib.LazyTalon;
 
 public class TunableMotorFactory {
 
-    //Creates a Tunable TalonFXS
+    //Creates a Tunable Pheonix Motor -> TalonFX or TalonFXS
     public static TunableMotor createFXSMotor(LazyFXS FXSMotor){
-        return new TunableFXS(FXSMotor);
-    }
-
-    //Creates a Tunable TalonFX
-    public static TunableMotor createTalonMotor(LazyTalon talonMotor){
-        return new TunableTalon(talonMotor);
+        return new TunablePheonix(FXSMotor);
     }
 
     //Creates a Tunable Sim Motor

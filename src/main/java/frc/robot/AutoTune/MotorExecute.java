@@ -35,7 +35,7 @@ public class MotorExecute {
     }
 
     /**
-     * I'll have all the motor controls to be new here. 
+     * I'll have all the motor controls to be new here, seperate from the TunableMotor Classes 
      * I want to do that because I want to have all motor controls to have forward and reverse soft limits
      * So there will be new methods that consider the mechanism of the motor: free spin or position mechanism 
      */
