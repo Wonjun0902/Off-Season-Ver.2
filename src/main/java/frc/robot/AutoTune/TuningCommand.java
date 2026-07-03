@@ -1,10 +1,11 @@
 package frc.robot.AutoTune;
 
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import frc.robot.AutoTune.MotorExecute;
 
 public class TuningCommand extends SubsystemBase{
 
@@ -34,7 +35,7 @@ public class TuningCommand extends SubsystemBase{
     //Normal PID + MM + MMExpo
 
     /**
-     * kS Command 
+     * kS Tuning Command 
      * Do small increments of Voltage starting from 0V
      * But can adjust the increment 
      * As the command acts as a loop itself, we don't need to use for-loops for this tuning mechanism
@@ -43,8 +44,6 @@ public class TuningCommand extends SubsystemBase{
     private double currentVolts = 0.0;
 
     public Command kSTuningCommand(double voltsPerLoop){
-        //Initialize the volts for 0.0 at the start
-        currentVolts = 0.0; 
     return run(
         () -> {
             // 1. Add the small increment (happens every 20ms)
@@ -54,11 +53,18 @@ public class TuningCommand extends SubsystemBase{
             motorExecute.setMotorVoltage(currentVolts);
         }
     )
+    .beforeStarting(() -> {
+        currentVolts = 0.0;
+    })
+    .until(() -> {
+        double currentSpeed = Math.abs(motorExecute.getMotorSpeed().in(RotationsPerSecond));
+        return currentSpeed > 0.05;
+    })
     .finallyDo(() -> motorExecute.stopMotor());
     }
 
     /**
-     * kV Command 
+     * kV Tuning Command 
      * I set a target speed and apply voltage that increments until the voltage makes the motor turn until 80% of the target speed
      * When the motor speed reaches 80% of the target speed the motor will stop applying the voltage 
      * Later in the analyzer class, I will get the voltage that enables the motor to reach 80% speed!
@@ -92,6 +98,10 @@ public class TuningCommand extends SubsystemBase{
             motorExecute.stopMotor();
         });
     }
+    //TODO: 
 
-    
+    /**
+     * kP Tuning Command 
+     * Where kV does most of the work, 
+     */
 }
