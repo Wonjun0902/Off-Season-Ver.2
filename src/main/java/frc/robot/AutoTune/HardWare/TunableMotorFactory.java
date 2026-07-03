@@ -1,7 +1,6 @@
 package frc.robot.AutoTune.HardWare;
 
 import frc.lib.LazyFXS;
-import frc.lib.LazyTalon;
 
 public class TunableMotorFactory {
 
