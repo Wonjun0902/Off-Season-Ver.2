@@ -132,4 +132,9 @@ public class MotorExecute {
     public Voltage getVoltage(){
         return m_motor.getVoltage();
     }
+
+    //the same 
+    public void stopMotor(){
+        m_motor.stopMotor();
+    }
 }
