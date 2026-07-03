@@ -1,6 +1,5 @@
 package frc.robot.AutoTune;
 
-import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -32,7 +31,7 @@ public class TuningCommand extends SubsystemBase{
 
     private MotorExecute motorExecute;
 
-    //Normal PID + MM + MMExpo
+    //Normal PID + MM + MMExpo for Free Spin Subsystems 
 
     /**
      * kS Tuning Command 
@@ -98,10 +97,4 @@ public class TuningCommand extends SubsystemBase{
             motorExecute.stopMotor();
         });
     }
-    //TODO: 
-
-    /**
-     * kP Tuning Command 
-     * Where kV does most of the work, 
-     */
 }
