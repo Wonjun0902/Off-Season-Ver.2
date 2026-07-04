@@ -60,7 +60,7 @@ public class kVTuningCommand extends SubsystemBase{
     }
 
     public double getKV(){
-        return tunedkV;
+        return SmartDashboard.getNumber("kV Value: ", tunedkV);
     }
 
 }

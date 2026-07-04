@@ -49,6 +49,6 @@ public class kSTuningCommand extends SubsystemBase{
     }
 
     public double getKS(){
-        return tunedkS;
+        return SmartDashboard.getNumber("kS Value: ", tunedkS);
     }
 }
