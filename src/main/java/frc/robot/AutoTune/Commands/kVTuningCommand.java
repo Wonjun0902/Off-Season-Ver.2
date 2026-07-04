@@ -3,13 +3,16 @@ package frc.robot.AutoTune.Commands;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.AutoTune.MotorExecute;
+import frc.robot.AutoTune.Commands.kSTuningCommand;
 
 public class kVTuningCommand extends SubsystemBase{
 
     private MotorExecute motorExecute;
+    private kSTuningCommand kSTuningCommand;
 
     /**
      * kV Tuning Command 
@@ -20,6 +23,7 @@ public class kVTuningCommand extends SubsystemBase{
      * @param targetSpeed
      */
     private double currentVoltage;
+    private double tunedkV;
     public Command kVTuningCommand(AngularVelocity targetSpeed, double voltsPerLoop){
         //Initialize the volts for 0.0 at the start 
         currentVoltage = 0.0;
@@ -42,8 +46,14 @@ public class kVTuningCommand extends SubsystemBase{
 
             return currentSpeed.gte(threshold);
         })
-        .finallyDo(() -> {
+        .finallyDo((interrupted) -> {
             motorExecute.stopMotor();
+
+            double kS = kSTuningCommand.getKS();
+            double currentSpeed = motorExecute.getMotorSpeed().in(RotationsPerSecond);
+            tunedkV = (currentVoltage - kS) / (currentSpeed);
+
+            SmartDashboard.putNumber("kV Value: ", tunedkV);
         });
     }
 
