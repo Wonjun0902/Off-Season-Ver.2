@@ -57,4 +57,8 @@ public class kVTuningCommand extends SubsystemBase{
         });
     }
 
+    public double getKV(){
+        return tunedkV;
+    }
+
 }
