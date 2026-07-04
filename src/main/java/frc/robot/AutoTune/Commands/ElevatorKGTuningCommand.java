@@ -22,7 +22,7 @@ public class ElevatorKGTuningCommand extends SubsystemBase{
      * @param setUpVolts to move the elevator up to a certain position 
      * @param voltsPerLoop for increments for the voltage to make the elevator stands still. 
      */
-    public Command ElevatorKGTuningCommand(double setUpVolts, double setUpPosition, double voltsPerLoop){
+    public Command elevatorKGTuningCommand(double setUpVolts, double setUpPosition, double voltsPerLoop){
 
         //Set up the elevator to be in a certain position 
         Command setUpElevator = run(() -> {
