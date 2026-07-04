@@ -1,4 +1,4 @@
-package frc.robot.AutoTune;
+package frc.robot.AutoTune.Commands;
 
 public class ElevatorKGTuningCommand {
 
