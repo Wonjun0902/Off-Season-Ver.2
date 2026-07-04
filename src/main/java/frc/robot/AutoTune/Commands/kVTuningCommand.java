@@ -49,11 +49,13 @@ public class kVTuningCommand extends SubsystemBase{
         .finallyDo((interrupted) -> {
             motorExecute.stopMotor();
 
-            double kS = kSTuningCommand.getKS();
-            double currentSpeed = motorExecute.getMotorSpeed().in(RotationsPerSecond);
-            tunedkV = (currentVoltage - kS) / (currentSpeed);
+            if(!interrupted){
+                double kS = kSTuningCommand.getKS();
+                double currentSpeed = motorExecute.getMotorSpeed().in(RotationsPerSecond);
+                tunedkV = (currentVoltage - kS) / (currentSpeed);
 
-            SmartDashboard.putNumber("kV Value: ", tunedkV);
+                SmartDashboard.putNumber("kV Value: ", tunedkV);
+            }
         });
     }
 
