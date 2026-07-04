@@ -6,6 +6,8 @@ import frc.robot.AutoTune.MotorExecute;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class kSTuningCommand extends SubsystemBase{
 
     private MotorExecute motorExecute;
@@ -36,7 +38,11 @@ public class kSTuningCommand extends SubsystemBase{
         double currentSpeed = Math.abs(motorExecute.getMotorSpeed().in(RotationsPerSecond));
         return currentSpeed > 0.05;
     })
-    .finallyDo(() -> motorExecute.stopMotor());
+    .finallyDo((interrupted) -> {
+        motorExecute.stopMotor();
+        if(!interrupted){
+            SmartDashboard.putNumber("kS Value: ", currentVolts);
+        }
+    });
     }
-
 }
