@@ -20,6 +20,7 @@ public class kSTuningCommand extends SubsystemBase{
      * @param voltsPerLoop for this, I will implement actual values in the combiner class for different subsystems, also may make it all the same
      */
     private double currentVolts = 0.0;
+    private double tunedkS = 0.0;
 
     public Command kSTuningCommand(double voltsPerLoop){
     return run(
@@ -41,8 +42,13 @@ public class kSTuningCommand extends SubsystemBase{
     .finallyDo((interrupted) -> {
         motorExecute.stopMotor();
         if(!interrupted){
+            tunedkS = currentVolts;
             SmartDashboard.putNumber("kS Value: ", currentVolts);
         }
     });
+    }
+
+    public double getKS(){
+        return tunedkS;
     }
 }
