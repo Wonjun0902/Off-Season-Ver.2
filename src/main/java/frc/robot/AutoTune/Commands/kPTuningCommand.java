@@ -103,6 +103,15 @@ public class kPTuningCommand extends SubsystemBase{
         return SmartDashboard.getNumber("kP Value: ", bestkP);
     }
 
+    private double testkPPOS = 0.0;
+    private double bestkPPOS = 0.0;
+    private double lowestScorePOS = Double.MAX_VALUE;
+
+    private double cumulativeErrorPOS = 0.0;
+    private double maxWindowErrorPOS = 0.0;
+
+    private Timer stepTimerPOS = new Timer();
+    
     /**
      * kP Tuning Command for Position Mechanism 
      * This command runs some tests calculates for the kP Gain
@@ -117,14 +126,14 @@ public class kPTuningCommand extends SubsystemBase{
             double currentPosition = motorExecute.getMotorPosition().in(Radians);
             double error = Math.abs(targetPosition - currentPosition);
 
-            cumulativeError += error;
+            cumulativeErrorPOS += error;
 
             //Window Check
             //If we are in the last 0.5 seconds, track the worst error we see 
-            double timeRemaining = duration - stepTimer.get();
+            double timeRemaining = duration - stepTimerPOS.get();
             if(timeRemaining < 0.5){
-                if(error < maxWindowError){
-                    maxWindowError = error;
+                if(error < maxWindowErrorPOS){
+                    maxWindowErrorPOS = error;
                 }
             }
 
@@ -138,43 +147,47 @@ public class kPTuningCommand extends SubsystemBase{
             motorExecute.setMotorVoltagePOS(pidVoltage + ffVoltage);
 
             //4. Evaluate kP value when the timer is over 
-            if(stepTimer.hasElapsed(duration)){
+            if(stepTimerPOS.hasElapsed(duration)){
                 //Multiply the worst error by 50 -> for scoring reasons 
                 double finalWeight = 50.0;
-                double score = cumulativeError + (maxWindowError * finalWeight);
+                double score = cumulativeErrorPOS + (maxWindowErrorPOS * finalWeight);
 
-                if(score < lowestScore){
-                    bestkP = testkP;
+                if(score < lowestScorePOS){
+                    bestkPPOS = testkPPOS;
                 }
 
-                testkP += kPIncrement;
-                pidController.setP(testkP);
-                cumulativeError = 0.0;
-                stepTimer.restart();
+                testkPPOS += kPIncrement;
+                pidController.setP(testkPPOS);
+                cumulativeErrorPOS = 0.0;
+                stepTimerPOS.restart();
             }
         })
         .beforeStarting(() -> {
-            testkP = kPIncrement;
-            bestkP = 0.0;
-            lowestScore = Double.MAX_VALUE;
-            cumulativeError = 0.0;
-            maxWindowError = 0.0;
+            testkPPOS = kPIncrement;
+            bestkPPOS = 0.0;
+            lowestScorePOS = Double.MAX_VALUE;
+            cumulativeErrorPOS = 0.0;
+            maxWindowErrorPOS = 0.0;
 
             pidController.reset();
-            pidController.setP(testkP);
+            pidController.setP(testkPPOS);
 
-            stepTimer.restart();
+            stepTimerPOS.restart();
         })
         .until(() -> {
-            return testkP > maxkP;
+            return testkPPOS > maxkP;
         })
         .finallyDo((interrupted) -> {
             motorExecute.stopMotor();
             
             if(!interrupted){
-                SmartDashboard.putNumber("kP Value: ", bestkP);
+                SmartDashboard.putNumber("kP Value POS: ", bestkPPOS);
             }
         });
+    }
+
+    public double getkPPOS(){
+        return SmartDashboard.getNumber("kP Value POS: ", bestkPPOS);
     }
 
 }
