@@ -31,7 +31,7 @@ public class kPTuningCommand extends SubsystemBase{
      * @param kPIncrement increment of kP per loop
      * @param targetSpeed target speed of the mechanism 
      * @param duration test duration for accuracy 
-     * @param maxkP 
+     * @param maxkP max kP for safety issues 
      */
     public Command kPTuningCommand(double kPIncrement, double targetSpeed, double duration, double maxkP){
         return run(() -> {
@@ -116,9 +116,9 @@ public class kPTuningCommand extends SubsystemBase{
      * kP Tuning Command for Position Mechanism 
      * This command runs some tests calculates for the kP Gain
      * @param kPIncrement increment of kP per loop
-     * @param targetPosition target position of the mechanism 
+     * @param targetPosition target position of the position mechanism 
      * @param duration test duration for accuracy 
-     * @param maxkP 
+     * @param maxkP max kP value for safety issues 
      */
     public Command kPTuningCommandPOS(double kPIncrement, double targetPosition, double duration, double maxkP, double cruiseVelocity){
         return run(() -> {
