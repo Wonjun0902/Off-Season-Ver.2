@@ -64,9 +64,6 @@ public class ElevatorKGTuningCommand extends SubsystemBase{
     }
 
     public double getKG(){
-        return tunedkG;
+        return SmartDashboard.getNumber("kG Value: ", tunedkG);
     }
-
-
-
 }
