@@ -29,8 +29,6 @@ public class LazyTunableTalon implements TunableMotor{
     private TalonFX motor;
 
     private boolean enableFOC = true;
-    private Voltage inputVoltage;
-    private Current inputCurrent;
 
     private final MotionMagicVoltage mmPosVoltage = new MotionMagicVoltage(0.0).withEnableFOC(this.enableFOC);
     private final MotionMagicExpoVoltage mmPosExpVoltage = new MotionMagicExpoVoltage(0.0).withEnableFOC(this.enableFOC);
@@ -38,8 +36,8 @@ public class LazyTunableTalon implements TunableMotor{
     private final VelocityTorqueCurrentFOC velTFOC = new VelocityTorqueCurrentFOC(0.0);
     private final PositionVoltage posVoltage = new PositionVoltage(0.0).withEnableFOC(this.enableFOC);
     private final VelocityVoltage velVoltage = new VelocityVoltage(0.0).withEnableFOC(this.enableFOC);
-    private final VoltageOut voltageOut = new VoltageOut(inputVoltage);
-    private final TorqueCurrentFOC torqueCurrentFOC = new TorqueCurrentFOC(inputCurrent);
+    private final VoltageOut voltageOut = new VoltageOut(0.0);
+    private final TorqueCurrentFOC torqueCurrentFOC = new TorqueCurrentFOC(0.0);
 
     public LazyTunableTalon(int motorID, CANBus canBus, double gearRatio){
         motor = new TalonFX(motorID, canBus);
@@ -61,7 +59,7 @@ public class LazyTunableTalon implements TunableMotor{
 
     @Override
     public void setMotorCurrent(double current){
-        this.motor.setControl(torqueCurrentFOC.withOutput(inputCurrent));
+        this.motor.setControl(torqueCurrentFOC.withOutput(current));
     }
 
     @Override
