@@ -65,7 +65,9 @@ public class kPTuningCommand extends SubsystemBase{
                 double finalWeight = 50.0;
                 double score = cumulativeError + (maxWindowError * finalWeight);
 
+                //Check if the score is lower than the lowest Score
                 if(score < lowestScore){
+                    lowestScore = score;
                     bestkP = testkP;
                 }
 
