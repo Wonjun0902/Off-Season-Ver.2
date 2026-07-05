@@ -1,6 +1,7 @@
 package frc.robot.AutoTune.HardWare;
 
 import frc.lib.LazyTalon;
+import frc.robot.AutoTune.LazyTunableTalon;
 
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Amps;
@@ -12,9 +13,9 @@ import edu.wpi.first.units.measure.Voltage;
 
 public class TunableTalon implements TunableMotor{
 
-    private LazyTalon m_motor;
+    private LazyTunableTalon m_motor;
 
-    public TunableTalon(LazyTalon motor){
+    public TunableTalon(LazyTunableTalon motor){
         this.m_motor = motor;
     }
 

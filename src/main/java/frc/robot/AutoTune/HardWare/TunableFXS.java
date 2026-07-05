@@ -1,7 +1,5 @@
 package frc.robot.AutoTune.HardWare;
 
-import frc.lib.LazyFXS;
-
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Amps;
 import edu.wpi.first.units.measure.Angle;
@@ -9,12 +7,13 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.AutoTune.LazyTunableFXS;
 
 public class TunableFXS implements TunableMotor{
 
-    private LazyFXS m_motor;
+    private LazyTunableFXS m_motor;
 
-    public TunableFXS(LazyFXS motor){
+    public TunableFXS(LazyTunableFXS motor){
         this.m_motor = motor;
     }
 

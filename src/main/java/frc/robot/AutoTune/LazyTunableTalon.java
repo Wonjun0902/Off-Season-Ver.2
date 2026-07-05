@@ -1,4 +1,4 @@
-package frc.lib;
+package frc.robot.AutoTune;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -20,9 +20,12 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.lib.LazyCTRE;
+import frc.lib.LazyCTRE.MotorTelemetry;
+import frc.robot.AutoTune.HardWare.TunableMotor;
 
 
-public class LazyTunableTalon implements LazyCTRE {
+public class LazyTunableTalon implements LazyCTRE, TunableMotor{
 
     private TalonFX motor;
 
@@ -161,5 +164,40 @@ public class LazyTunableTalon implements LazyCTRE {
 
     public CANcoder getCanCoder() {
         return null;
+    }
+
+    @Override
+    public void setMotorVoltage(double volts){
+        this.motor.setVoltage(volts);
+    }
+
+    @Override
+    public void setMotorCurrent(double current){
+        this.motor.setControl(torqueCurrentFOC.withOutput(inputCurrent));
+    }
+
+    @Override
+    public void stopMotor(){
+        this.motor.stopMotor();
+    }
+
+    @Override
+    public AngularVelocity getMotorSpeed(){
+        return this.motor.getVelocity().getValue();
+    }
+
+    @Override
+    public Angle getMotorPosition(){
+        return this.motor.getPosition().getValue();
+    }
+
+    @Override 
+    public Current getCurrent(){
+        return this.motor.getStatorCurrent().getValue();
+    }
+
+    @Override
+    public Voltage getVoltage(){
+        return this.motor.getMotorVoltage().getValue();
     }
 }
