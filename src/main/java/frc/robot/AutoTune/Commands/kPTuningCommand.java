@@ -8,14 +8,10 @@ import frc.robot.AutoTune.MotorExecute;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Commands; 
 
 public class kPTuningCommand{
 
-    private MotorExecute motorExecute;
-    private kSTuningCommand kSTuningCommand;
-    private kVTuningCommand kVTuningCommand;
     private PIDController pidController;
 
     private double testkP = 0.0;
@@ -29,10 +25,6 @@ public class kPTuningCommand{
 
     private boolean isreachedTarget = false;
 
-    public kPTuningCommand(MotorExecute motorExecute){
-        this.motorExecute = motorExecute;
-    }
-
     /**
      * kP Tuning Command for Free Spin 
      * This command runs some tests calculates for the kP Gain
@@ -41,7 +33,7 @@ public class kPTuningCommand{
      * @param duration test duration for accuracy 
      * @param maxkP max kP for safety issues 
      */
-    public Command kPTuningCommand(double kPIncrement, double targetSpeed, double duration, double maxkP, double gearRatio){
+    public Command kPTuningCommand(double kPIncrement, double targetSpeed, double duration, double maxkP, double gearRatio, MotorExecute motorExecute, kSTuningCommand kSTuningCommand, kVTuningCommand kVTuningCommand){
         return Commands.run(() -> {
 
             //1. Calculate the current error of Speed

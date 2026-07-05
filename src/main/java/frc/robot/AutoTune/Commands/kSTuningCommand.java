@@ -11,12 +11,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 public class kSTuningCommand{
 
-    private MotorExecute motorExecute;
-
-    public kSTuningCommand(MotorExecute motorExecute){
-        this.motorExecute = motorExecute;
-    }
-
     /**
      * kS Tuning Command 
      * Do small increments of Voltage starting from 0V
@@ -27,7 +21,7 @@ public class kSTuningCommand{
     private double currentVolts = 0.0;
     private double tunedkS = 0.0;
 
-    public Command kSTuningCommand(double voltsPerLoop, double gearRatio){
+    public Command kSTuningCommand(double voltsPerLoop, double gearRatio, MotorExecute motorExecute){
     return Commands.run(
         () -> {
             // 1. Add the small increment (happens every 20ms)

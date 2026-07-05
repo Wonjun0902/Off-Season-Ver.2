@@ -1,12 +1,6 @@
 package frc.robot.AutoTune.Commands;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-
-import java.security.DrbgParameters.Reseed;
-import java.util.Currency;
 
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.AutoTune.MotorExecute;
@@ -17,11 +11,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 public class kDTuningCommand{
 
-    private MotorExecute motorExecute;
-    private kSTuningCommand kSTuningCommand;
-    private kVTuningCommand kVTuningCommand;
     private PIDController pidController;
-    private kPTuningCommand kPTuningCommand;
 
     private double testkD = 0.0;
     private double bestkD = 0.0;
@@ -31,10 +21,6 @@ public class kDTuningCommand{
 
     private Timer stepTimer = new Timer();
 
-    public kDTuningCommand(MotorExecute motorExecute){
-        this.motorExecute = motorExecute;
-    }
-
     /**
      * kD Tuning Command for Free Spin 
      * This command runs multiple kDs and calculates for the optimized kD gain
@@ -43,7 +29,7 @@ public class kDTuningCommand{
      * @param duration test duration for accuracy 
      * @param maxkD for jittering 
      */
-    public Command kDTuningCommand(double kDIncrement, double targetSpeed, double duration, double maxkD, double gearRatio){
+    public Command kDTuningCommand(double kDIncrement, double targetSpeed, double duration, double maxkD, double gearRatio, kPTuningCommand kPTuningCommand, kSTuningCommand kSTuningCommand, kVTuningCommand kVTuningCommand, MotorExecute motorExecute){
         return Commands.run(() -> {
             //1. Calculate for the current error of the speed
             double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RadiansPerSecond);

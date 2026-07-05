@@ -5,18 +5,10 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.AutoTune.MotorExecute;
 import edu.wpi.first.wpilibj2.command.Commands; 
 
 public class kVTuningCommand{
-
-    private MotorExecute motorExecute;
-    private kSTuningCommand kSTuningCommand;
-
-    public kVTuningCommand(MotorExecute motorExecute){
-        this.motorExecute = motorExecute;
-    }
 
     /**
      * kV Tuning Command 
@@ -28,7 +20,7 @@ public class kVTuningCommand{
      */
     private double currentVoltage;
     private double tunedkV;
-    public Command kVTuningCommand(AngularVelocity targetSpeed, double voltsPerLoop, double gearRatio){
+    public Command kVTuningCommand(AngularVelocity targetSpeed, double voltsPerLoop, double gearRatio, MotorExecute motorExecute, kSTuningCommand kSTuningCommand){
         //Initialize the volts for 0.0 at the start 
         currentVoltage = 0.0;
         return Commands.run(
