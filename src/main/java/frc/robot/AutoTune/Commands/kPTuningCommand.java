@@ -2,6 +2,7 @@ package frc.robot.AutoTune.Commands;
 
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.AutoTune.MotorExecute;
 import edu.wpi.first.wpilibj.Timer;
@@ -35,58 +36,56 @@ public class kPTuningCommand extends SubsystemBase{
      */
     public Command kPTuningCommand(double kPIncrement, double targetSpeed, double duration, double maxkP){
         return run(() -> {
-            //1. Calculate for the current error 
-            double currentSpeed = motorExecute.getMotorSpeed().in(RadiansPerSecond);
-            double error = Math.abs(targetSpeed - currentSpeed);
 
+            //1. Calculate the current error of Speed
+            double currentSpeed = motorExecute.getMotorSpeed().in(RadiansPerSecond);
+            double error = Math.abs(currentSpeed - targetSpeed);
+
+            //2. Adds the absolute error to the cumulative error 
             cumulativeError += error;
 
-            //Window Check
-            //If we are in the last 0.5 seconds, track the worst error we see 
+            //3. Check if there are any big errors in the last 0.5 seconds -> for big oscillation checks
             double timeRemaining = duration - stepTimer.get();
             if(timeRemaining < 0.5){
-                if(error < maxWindowError){
+                if(error > maxWindowError){
                     maxWindowError = error;
                 }
             }
 
-            //Apply PID and FF Voltage
+            //Apply PID Voltage and FF Voltage to the Motor
             double pidVoltage = pidController.calculate(currentSpeed, targetSpeed);
 
             double kS = kSTuningCommand.getKS();
             double kV = kVTuningCommand.getKV();
-            double ffVoltage = kS *Math.signum(targetSpeed) + kV * targetSpeed;
-
+            double ffVoltage = kS * Math.signum(targetSpeed) + kV * targetSpeed;
+            
             motorExecute.setMotorVoltage(pidVoltage + ffVoltage);
 
-            //4. Evaluate kP value when the timer is over 
             if(stepTimer.hasElapsed(duration)){
-                //Multiply the worst error by 50 -> for scoring reasons 
                 double finalWeight = 50.0;
                 double score = cumulativeError + (maxWindowError * finalWeight);
 
-                //Check if the score is lower than the lowest Score
                 if(score < lowestScore){
                     lowestScore = score;
                     bestkP = testkP;
                 }
 
                 testkP += kPIncrement;
+                stepTimer.restart();
                 pidController.setP(testkP);
                 cumulativeError = 0.0;
-                stepTimer.restart();
+                maxWindowError = 0.0;
             }
         })
         .beforeStarting(() -> {
             testkP = kPIncrement;
-            bestkP = 0.0;
-            lowestScore = Double.MAX_VALUE;
-            cumulativeError = 0.0;
-            maxWindowError = 0.0;
-
             pidController.reset();
             pidController.setP(testkP);
 
+            lowestScore = Double.MAX_VALUE;
+            cumulativeError = 0.0;
+            maxWindowError = 0.0;
+            
             stepTimer.restart();
         })
         .until(() -> {
@@ -94,12 +93,11 @@ public class kPTuningCommand extends SubsystemBase{
         })
         .finallyDo((interrupted) -> {
             motorExecute.stopMotor();
-            
+
             if(!interrupted){
                 SmartDashboard.putNumber("kP Value: ", bestkP);
             }
-        });
-    }
+        });}
 
     public double getkP(){
         return SmartDashboard.getNumber("kP Value: ", bestkP);
@@ -134,7 +132,7 @@ public class kPTuningCommand extends SubsystemBase{
             //If we are in the last 0.5 seconds, track the worst error we see 
             double timeRemaining = duration - stepTimerPOS.get();
             if(timeRemaining < 0.5){
-                if(error < maxWindowErrorPOS){
+                if(error > maxWindowErrorPOS){
                     maxWindowErrorPOS = error;
                 }
             }
@@ -155,6 +153,7 @@ public class kPTuningCommand extends SubsystemBase{
                 double score = cumulativeErrorPOS + (maxWindowErrorPOS * finalWeight);
 
                 if(score < lowestScorePOS){
+                    score = lowestScorePOS;
                     bestkPPOS = testkPPOS;
                 }
 
