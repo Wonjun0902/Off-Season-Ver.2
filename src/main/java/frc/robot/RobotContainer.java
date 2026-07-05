@@ -36,6 +36,7 @@ import frc.robot.subsystems.swerve.TunerConstants;
 import frc.lib.Pathfinder;
 import frc.robot.subsystems.limelight.Limelight;
 import frc.lib.LimelightHelpers;
+import frc.robot.AutoTune.AutoCalibratorCombiner;
 
 import frc.robot.autonomous.paths.*;
 
@@ -47,6 +48,8 @@ public class RobotContainer {
   public static Throat throat;
   public static Shooter shooter;
   public static AutoAlign autoAligner; // utility for shooting auto-align
+
+  public static AutoCalibratorCombiner autoCalibratorCombiner;
 
   public static final Swerve drivetrain = TunerConstants.createDrivetrain();
   public static final Pathfinder PATHFINDER = new Pathfinder(drivetrain);
@@ -74,6 +77,7 @@ public class RobotContainer {
       shooter = new Shooter(new ShooterIOReal(Rotations.of(0.0)));
       autoAligner = new AutoAlign();
       mrKrabs = new MrKrabs(intake, indexer, throat, shooter);
+      autoCalibratorCombiner = new AutoCalibratorCombiner();
 
       // limelightDebugFRONT.startPeriodic(0.02);
       // limelightDebugBACK.startPeriodic(0.02);
@@ -86,6 +90,7 @@ public class RobotContainer {
       shooter = new Shooter(new ShooterIOSim());
       autoAligner = new AutoAlign();
       mrKrabs = new MrKrabs(intake, indexer, throat, shooter);
+      autoCalibratorCombiner = new AutoCalibratorCombiner();
     }
 
     Optional<Alliance> alliance = DriverStation.getAlliance();
