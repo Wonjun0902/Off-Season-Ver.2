@@ -26,6 +26,8 @@ public class kPTuningCommand extends SubsystemBase{
 
     private Timer stepTimer = new Timer();
 
+    private boolean isreachedTarget = false;
+
     /**
      * kP Tuning Command for Free Spin 
      * This command runs some tests calculates for the kP Gain
@@ -55,13 +57,10 @@ public class kPTuningCommand extends SubsystemBase{
             //4. Check if the motor speed reaches the targetSpeed
             double absCurrentSpeed = Math.abs(currentSpeed);
             double absTargetSpeed = Math.abs(targetSpeed);
-            boolean isreachedTarget = false;
-            double lastLoopTime = duration - stepTimer.get();
-            if(lastLoopTime < 0.1){
-                if(absCurrentSpeed < absTargetSpeed){
-                    isreachedTarget = true;
-                }
+            if(absCurrentSpeed > absTargetSpeed){
+                isreachedTarget = true;
             }
+            
 
             //Apply PID Voltage and FF Voltage to the Motor
             double pidVoltage = pidController.calculate(currentSpeed, targetSpeed);
@@ -72,17 +71,20 @@ public class kPTuningCommand extends SubsystemBase{
             
             motorExecute.setMotorVoltage(pidVoltage + ffVoltage);
 
+            //Scoring 
             if(stepTimer.hasElapsed(duration)){
-                double finalWeight = 50.0;
+                double finalWeight = 50.0; //Might Adjust it
+
+                //If the speed didn't reach the target, we just don't consider the kP value
+                if(!isreachedTarget){
+                    finalWeight = Double.MAX_VALUE;
+                }
+
                 double score = cumulativeError + (maxWindowError * finalWeight);
 
                 if(score < lowestScore){
                     lowestScore = score;
                     bestkP = testkP;
-                }
-
-                if(!isreachedTarget){
-                    score = Double.MAX_VALUE;
                 }
 
                 testkP += kPIncrement;
