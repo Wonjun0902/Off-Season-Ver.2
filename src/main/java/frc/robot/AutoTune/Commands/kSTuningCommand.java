@@ -7,8 +7,9 @@ import frc.robot.AutoTune.MotorExecute;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Commands; 
 
-public class kSTuningCommand extends SubsystemBase{
+public class kSTuningCommand{
 
     private MotorExecute motorExecute;
 
@@ -27,7 +28,7 @@ public class kSTuningCommand extends SubsystemBase{
     private double tunedkS = 0.0;
 
     public Command kSTuningCommand(double voltsPerLoop, double gearRatio){
-    return run(
+    return Commands.run(
         () -> {
             // 1. Add the small increment (happens every 20ms)
             currentVolts += voltsPerLoop;

@@ -13,8 +13,9 @@ import frc.robot.AutoTune.MotorExecute;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands; 
 
-public class kDTuningCommand extends SubsystemBase{
+public class kDTuningCommand{
 
     private MotorExecute motorExecute;
     private kSTuningCommand kSTuningCommand;
@@ -43,7 +44,7 @@ public class kDTuningCommand extends SubsystemBase{
      * @param maxkD for jittering 
      */
     public Command kDTuningCommand(double kDIncrement, double targetSpeed, double duration, double maxkD, double gearRatio){
-        return run(() -> {
+        return Commands.run(() -> {
             //1. Calculate for the current error of the speed
             double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RadiansPerSecond);
             double absError = Math.abs(currentSpeed - targetSpeed);
@@ -59,6 +60,8 @@ public class kDTuningCommand extends SubsystemBase{
             double ffVoltage = kS * Math.signum(currentSpeed) + kV * targetSpeed;
 
             motorExecute.setMotorVoltage(pidVoltage + ffVoltage);
+
+            double tunedkP = kPTuningCommand.getkP();
 
             //Scoring 
             if(stepTimer.hasElapsed(duration)){

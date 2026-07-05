@@ -9,8 +9,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Commands; 
 
-public class kPTuningCommand extends SubsystemBase{
+public class kPTuningCommand{
 
     private MotorExecute motorExecute;
     private kSTuningCommand kSTuningCommand;
@@ -41,7 +42,7 @@ public class kPTuningCommand extends SubsystemBase{
      * @param maxkP max kP for safety issues 
      */
     public Command kPTuningCommand(double kPIncrement, double targetSpeed, double duration, double maxkP, double gearRatio){
-        return run(() -> {
+        return Commands.run(() -> {
 
             //1. Calculate the current error of Speed
             double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RadiansPerSecond);

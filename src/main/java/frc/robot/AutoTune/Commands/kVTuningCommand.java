@@ -7,8 +7,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.AutoTune.MotorExecute;
+import edu.wpi.first.wpilibj2.command.Commands; 
 
-public class kVTuningCommand extends SubsystemBase{
+public class kVTuningCommand{
 
     private MotorExecute motorExecute;
     private kSTuningCommand kSTuningCommand;
@@ -30,7 +31,7 @@ public class kVTuningCommand extends SubsystemBase{
     public Command kVTuningCommand(AngularVelocity targetSpeed, double voltsPerLoop, double gearRatio){
         //Initialize the volts for 0.0 at the start 
         currentVoltage = 0.0;
-        return run(
+        return Commands.run(
           () -> {
             //1. Increment Voltage
             currentVoltage += voltsPerLoop;
