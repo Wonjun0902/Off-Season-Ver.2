@@ -24,7 +24,7 @@ import frc.lib.LazyCTRE;
 import frc.lib.LazyCTRE.MotorTelemetry;
 
 
-public class LazyTunableTalon implements LazyCTRE, TunableMotor{
+public class LazyTunableTalon implements TunableMotor{
 
     private TalonFX motor;
 
@@ -50,119 +50,8 @@ public class LazyTunableTalon implements LazyCTRE, TunableMotor{
     }
 
     @Override
-    public void setCurrentControl(Current inputCurrent){
-        this.motor.setControl(torqueCurrentFOC.withOutput(inputCurrent));
-    }
-
-    @Override
-    public void setVoltageControl(Voltage inputVoltage){
-        this.motor.setControl(voltageOut.withOutput(inputVoltage));
-    }
-
-    @Override
-    public void setMMPositionTarget(Angle setpoint, int slot) {
-        this.motor.setControl(mmPosVoltage.withPosition(setpoint).withSlot(slot));
-    }
-
-    @Override
-    public void setMMExpoTarget(Angle setpoint, int slot) {
-        this.motor.setControl(mmPosExpVoltage.withPosition(setpoint).withSlot(slot));
-    }
-
-    @Override
-    public void setMMVelocityTarget(AngularVelocity velocity, int slot) {
-        this.motor.setControl(mmVelVoltage.withVelocity(velocity).withSlot(slot));
-    }
-
-    @Override
-    public void setTFOCVelocityTarget(AngularVelocity velocity, Current feedforward, int slot) {
-        this.motor.setControl(velTFOC.withVelocity(velocity).withFeedForward(feedforward).withSlot(slot));
-    }
-
-    @Override
-    public void setPIDPositionTarget(Angle setpoint, int slot) {
-        this.motor.setControl(posVoltage.withPosition(setpoint).withSlot(slot));
-    }
-
-    @Override
-    public void setPIDVelocityTarget(AngularVelocity velocity, int slot) {
-        this.motor.setControl(velVoltage.withVelocity(velocity).withSlot(slot));
-    }
-
-    @Override
-    public void setDutyCycle(double percent) {
-        this.motor.set(percent);
-    }
-
-    @Override
-    public void setCoast() {
-        this.motor.setNeutralMode(NeutralModeValue.Coast);
-    }
-
-    @Override
-    public void setBrake() {
-        this.motor.setNeutralMode(NeutralModeValue.Brake);
-    }
-
-    @Override
-    public void enableFOC() {
-        this.enableFOC = true;
-    }
-
-    @Override
-    public void disableFOC() {
-        this.enableFOC = false;
-    }
-
-    @Override
-    public void stop() {
-        this.motor.stopMotor();
-    }
-
-    @Override
-    public Angle getPosition() {
-        return this.motor.getPosition().getValue();
-    }
-
-    @Override
-    public AngularVelocity getVelocity() {
-        return this.motor.getVelocity().getValue();
-    }
-
-    @Override
     public AngularAcceleration getAcceleration() {
         return this.motor.getAcceleration().getValue();
-    }
-
-    @Override
-    public Current getStatorCurrent() {
-        return this.motor.getStatorCurrent().getValue();
-    }
-
-    @Override
-    public Voltage getStatorVoltage() {
-        return this.motor.getMotorVoltage().getValue();
-    }
-
-    @Override
-    public void updateTelemetry(MotorTelemetry telemetry) {
-        telemetry.position = motor.getPosition().getValue();
-        telemetry.velocity = motor.getVelocity().getValue();
-        telemetry.acceleration = motor.getAcceleration().getValue();
-        telemetry.statorCurrent = motor.getStatorCurrent().getValue();
-        telemetry.supplyCurrent = motor.getSupplyCurrent().getValue();
-    }
-
-    public TalonFX getMotor() {
-        return motor;
-    }
-
-    public TalonFX getFollower() {
-        return null;
-    }
-
-    public CANcoder getCanCoder() {
-        return null;
     }
 
     @Override
