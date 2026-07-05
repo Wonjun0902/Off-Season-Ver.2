@@ -96,12 +96,12 @@ public class MotorExecute {
     }
 
     //For non-Position mech subsystems
-    public void setMotorVoltage(double current){
+    public void setMotorCurrent(double current){
         m_motor.setMotorCurrent(current);
     }
 
     //For non-position mech subsystems
-    public void setMotorCurrent(double volts){
+    public void setMotorVoltage(double volts){
         m_motor.setMotorVoltage(volts);
     }
 

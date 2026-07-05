@@ -28,6 +28,10 @@ public class kPTuningCommand extends SubsystemBase{
 
     private boolean isreachedTarget = false;
 
+    public kPTuningCommand(MotorExecute motorExecute){
+        this.motorExecute = motorExecute;
+    }
+
     /**
      * kP Tuning Command for Free Spin 
      * This command runs some tests calculates for the kP Gain

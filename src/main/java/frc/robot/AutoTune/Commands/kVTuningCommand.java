@@ -13,6 +13,10 @@ public class kVTuningCommand extends SubsystemBase{
     private MotorExecute motorExecute;
     private kSTuningCommand kSTuningCommand;
 
+    public kVTuningCommand(MotorExecute motorExecute){
+        this.motorExecute = motorExecute;
+    }
+
     /**
      * kV Tuning Command 
      * I set a target speed and apply voltage that increments until the voltage makes the motor turn until 80% of the target speed

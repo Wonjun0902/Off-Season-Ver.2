@@ -32,6 +32,10 @@ public class kDTuningCommand extends SubsystemBase{
 
     public double tunedkP = kPTuningCommand.getkP();
 
+    public kDTuningCommand(MotorExecute motorExecute){
+        this.motorExecute = motorExecute;
+    }
+
     /**
      * kD Tuning Command for Free Spin 
      * This command runs multiple kDs and calculates for the optimized kD gain

@@ -12,6 +12,10 @@ public class kSTuningCommand extends SubsystemBase{
 
     private MotorExecute motorExecute;
 
+    public kSTuningCommand(MotorExecute motorExecute){
+        this.motorExecute = motorExecute;
+    }
+
     /**
      * kS Tuning Command 
      * Do small increments of Voltage starting from 0V
