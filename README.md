@@ -3,29 +3,15 @@ Thanks for Entering!!
 This will be a project for an Auto PID-Tuning Algorithm!
 
 Code Structure
-- UI/SmartDashBoard setting
-- Tunable Motor Inteface -> implement with diff motors classes
-- Factory Pattern Class -> Use enum to use create instances of Motors
-- Motor Executing Class -> run the motor for the logger class 
-- Logger Class for data and visulizing graph
-- Analyzing Classes - FeedFoward Gains(kV, kS, kG), FeedBack Gains(PID), TorqueCurrentFOC FF, MMExpo Gains
-- Output Class
-- SIM Class for testing!
+- Commands Folder: Have all the tuning Commands, includes kP, kD, kS, kV, etc. Those Commands output the gains in the SmartDashboard 
+- HardWare Folder: Have the custom motor wrappers, those wrappers differ from the wrappers in the season code as this wrapper only includes the Canbus and the Motor ID, also have override methods 
+- Motor Execute: Have Main Methods for motor controls
+- AutoCalibratorCombiner: Class for having the sequence command and the ultimate tuning command -> have all the motors for each subsystem to be tuned!!!
 
 Details
-- Starting with Interfaces, I want to make them simple as possible: create an Interface, implement it with different motor types.
-In detail, the interface will be named "TunableMotor" and will have methods such as start(), stop(), setVoltage(), setCurrent(), getInstanceVelocity(), getInstancePos(), etc.
-After that, I can just implement them with different Motors using method overriding. For the factory pattern, I will use enums to select motors. The classes of Interface, Implemening Motor classes, and factory class will be inside a folder called "hardware"
-Moving on to motor executing class, I will have the class to input the gear ratios and the sensor ratios. And run the motor to certain voltages for the Logger Class. (Might or must have to add more features and inputs).
-For Logger Class, I will just have the code to log the stator voltage, velocity, position, and acceleration onto the SmartDashboard with a graph logger.
-For the Analyzing Classes. I will have them to calculate the gains, also seperating them according to their types.
-For the output class, it will push the data to NetworkTables or directly apply the configs to TalonFX slot configs
-For Sim, purely for testing stuffs using simulating features.
+- As I go through my first season in FRC, I have realized that tuning mechanisms takes quite a long time that we are supposed to use in testing our code. So I developed a code that runs through all the motors and outputs all the PID gains by it self. The code have custom wrapper classes for TalonFX and TalonFXS. I wrote the custom wrapper classes that differ from the season-code wrappers because I thought the season-wrappers had parameters and other features that I do not need in just running the motors with certain voltages and currents. I have also wrote some commands for getting each gains and also a ensemble command that runs all the motors with the command for getting the gains.
 
-Motor Execution Details
-- As I think tuning all the motors one by one takes a lot of time even for a auto tuner, I don't think there will be much of a difference than tuning every subsystem manually as I did this season. I want to have the code to execute ever motor to run by itself. For example, for the 2026 Season Bot, I will have the code to execute an analysis of Torque Current FOC for the Flywheel, execute analysis of Pure MMExpo for Intake, and all the other subsystem to run by itself for timesaving. For subsystems such as the deployer, I will have special features such as soft limits and hard limits and special methods of tuning than other basic free-spinning subsystems.I will also have them tune by themselves in order, NOT AT THE SAME TIME! so that they will tune themselves manually in order, having me the full gains after a few minutes or seconds
-
-How to Run the Code
-- Connect to the bot with this code, open DriverStation and SmartDashboard, deploy the code, use the computer to start analysis. The output will be shown in the dashboard. 
+How To Run 
+- As the API for FRC Java is changing starting from Season 2027, you may have to alter some code. But the overall structure is the same. You migrate the AutoTune folder and run the code! Open SmartDashboard so that the code can read of from it. 
 
 I hope it works!🤖🤖
