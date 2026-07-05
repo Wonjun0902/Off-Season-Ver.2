@@ -106,21 +106,21 @@ public class MotorExecute {
     }
 
     //Added Gear Ratio
-    public AngularVelocity getMotorSpeed(){
+    public AngularVelocity getMotorSpeed(double gearRatio){
         AngularVelocity currentVelocity = m_motor.getMotorSpeed();
-        return currentVelocity.div(m_gearRatio);
+        return currentVelocity.div(gearRatio);
     }
 
     //Added Gear Ratio
-    public Angle getMotorPosition(){
+    public Angle getMotorPosition(double gearRatio){
         Angle currentPosition = m_motor.getMotorPosition();
-        return currentPosition.div(m_gearRatio);
+        return currentPosition.div(gearRatio);
     }
 
     //Added Gear Ratio 
-    public AngularAcceleration getAcceleration(){
+    public AngularAcceleration getAcceleration(double gearRatio){
         AngularAcceleration currentAcc = m_motor.getAcceleration();
-        return currentAcc.div(m_gearRatio);
+        return currentAcc.div(gearRatio);
     }
 
     //the same 
