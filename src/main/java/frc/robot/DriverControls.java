@@ -2,6 +2,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.RobotContainer.autoAligner;
+import static frc.robot.RobotContainer.autoCalibratorCombiner;
 import static frc.robot.RobotContainer.drivetrain;
 import static frc.robot.RobotContainer.mrKrabs;
 import static frc.robot.subsystems.swerve.TunerConstants.MaxAngularRate;
@@ -188,6 +189,11 @@ public class DriverControls {
 						() -> defaultDriveControls(TunerConstants.overdriveSpeedLimiter))
 			)
 		);
+
+		DRIVER_CONTROLLER.leftBumper().onTrue(
+			autoCalibratorCombiner.tuneCommand()
+		);
+		
 
 		// .and(DRIVER_CONTROLLER.povUp()).whileTrue(
 		// drivetrain.applyRequest(() ->
