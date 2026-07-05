@@ -30,8 +30,6 @@ public class kDTuningCommand extends SubsystemBase{
 
     private Timer stepTimer = new Timer();
 
-    public double tunedkP = kPTuningCommand.getkP();
-
     public kDTuningCommand(MotorExecute motorExecute){
         this.motorExecute = motorExecute;
     }
@@ -79,15 +77,17 @@ public class kDTuningCommand extends SubsystemBase{
             }
     })
     .beforeStarting(() -> {
-         testkD = kDIncrement;
-            pidController.reset();
-            pidController.setD(testkD);
-            pidController.setP(tunedkP);
+        double tunedkP = kPTuningCommand.getkP();
 
-            lowestScore = Double.MAX_VALUE;
-            cumulativeError = 0.0;
+        testkD = kDIncrement;
+        pidController.reset();
+        pidController.setD(testkD);
+        pidController.setP(tunedkP);
 
-            stepTimer.restart();
+        lowestScore = Double.MAX_VALUE;
+        cumulativeError = 0.0;
+
+        stepTimer.restart();
     })
     .until(() -> {
         return testkD > maxkD;
