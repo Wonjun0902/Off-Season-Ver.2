@@ -39,16 +39,27 @@ public class kPTuningCommand extends SubsystemBase{
 
             //1. Calculate the current error of Speed
             double currentSpeed = motorExecute.getMotorSpeed().in(RadiansPerSecond);
-            double error = Math.abs(currentSpeed - targetSpeed);
+            double absError = Math.abs(currentSpeed - targetSpeed);
 
             //2. Adds the absolute error to the cumulative error 
-            cumulativeError += error;
+            cumulativeError += absError;
 
             //3. Check if there are any big errors in the last 0.5 seconds -> for big oscillation checks
             double timeRemaining = duration - stepTimer.get();
             if(timeRemaining < 0.5){
-                if(error > maxWindowError){
-                    maxWindowError = error;
+                if(absError > maxWindowError){
+                    maxWindowError = absError;
+                }
+            }
+
+            //4. Check if the motor speed reaches the targetSpeed
+            double absCurrentSpeed = Math.abs(currentSpeed);
+            double absTargetSpeed = Math.abs(targetSpeed);
+            boolean isreachedTarget = false;
+            double lastLoopTime = duration - stepTimer.get();
+            if(lastLoopTime < 0.1){
+                if(absCurrentSpeed < absTargetSpeed){
+                    isreachedTarget = true;
                 }
             }
 
@@ -68,6 +79,10 @@ public class kPTuningCommand extends SubsystemBase{
                 if(score < lowestScore){
                     lowestScore = score;
                     bestkP = testkP;
+                }
+
+                if(!isreachedTarget){
+                    score = Double.MAX_VALUE;
                 }
 
                 testkP += kPIncrement;
