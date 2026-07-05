@@ -23,7 +23,7 @@ public class kVTuningCommand extends SubsystemBase{
      */
     private double currentVoltage;
     private double tunedkV;
-    public Command kVTuningCommand(AngularVelocity targetSpeed, double voltsPerLoop){
+    public Command kVTuningCommand(AngularVelocity targetSpeed, double voltsPerLoop, double gearRatio){
         //Initialize the volts for 0.0 at the start 
         currentVoltage = 0.0;
         return run(
@@ -40,7 +40,7 @@ public class kVTuningCommand extends SubsystemBase{
         //Does this until the currentSpeed is greater or equal than the threshold, which is 80 percent of the targetSpeed
         //Basically making it stop when they are equal
         .until(() -> {
-            AngularVelocity currentSpeed = motorExecute.getMotorSpeed();
+            AngularVelocity currentSpeed = motorExecute.getMotorSpeed(gearRatio);
             AngularVelocity threshold  = targetSpeed.times(0.87);
 
             return currentSpeed.gte(threshold);
@@ -50,7 +50,7 @@ public class kVTuningCommand extends SubsystemBase{
 
             if(!interrupted){
                 double kS = kSTuningCommand.getKS();
-                double currentSpeed = motorExecute.getMotorSpeed().in(RotationsPerSecond);
+                double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RotationsPerSecond);
                 tunedkV = (currentVoltage - kS) / (currentSpeed);
 
                 SmartDashboard.putNumber("kV Value: ", tunedkV);

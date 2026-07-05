@@ -22,7 +22,7 @@ public class ElevatorKGTuningCommand extends SubsystemBase{
      * @param setUpVolts to move the elevator up to a certain position 
      * @param voltsPerLoop for increments for the voltage to make the elevator stands still. 
      */
-    public Command elevatorKGTuningCommand(double setUpVolts, double setUpPosition, double voltsPerLoop){
+    public Command elevatorKGTuningCommand(double setUpVolts, double setUpPosition, double voltsPerLoop, double gearRatio){
 
         //Set up the elevator to be in a certain position 
         Command setUpElevator = run(() -> {
@@ -30,7 +30,7 @@ public class ElevatorKGTuningCommand extends SubsystemBase{
         })
         //Stop when the motor position is gte than the setUpPosition or just when it is equal to the setUpPosition 
         .until(() -> {
-           double motorPosition = motorExecute.getMotorPosition().in(Rotations);
+           double motorPosition = motorExecute.getMotorPosition(gearRatio).in(Rotations);
 
            // This is in rotations!!
            return motorPosition >= setUpPosition;
@@ -46,7 +46,7 @@ public class ElevatorKGTuningCommand extends SubsystemBase{
         })
         .beforeStarting(() -> currentVoltage = 0.0)
         .until(() -> {
-            double elevatorSpeed = motorExecute.getMotorSpeed().in(RotationsPerSecond);
+            double elevatorSpeed = motorExecute.getMotorSpeed(gearRatio).in(RotationsPerSecond);
             return elevatorSpeed >= 0; //Change when the direction of it is different!!!!
         })
         .finallyDo((interrupted) -> {

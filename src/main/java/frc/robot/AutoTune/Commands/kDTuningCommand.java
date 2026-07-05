@@ -40,10 +40,10 @@ public class kDTuningCommand extends SubsystemBase{
      * @param duration test duration for accuracy 
      * @param maxkD for jittering 
      */
-    public Command kDTuningCommand(double kDIncrement, double targetSpeed, double duration, double maxkD){
+    public Command kDTuningCommand(double kDIncrement, double targetSpeed, double duration, double maxkD, double gearRatio){
         return run(() -> {
             //1. Calculate for the current error of the speed
-            double currentSpeed = motorExecute.getMotorSpeed().in(RadiansPerSecond);
+            double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RadiansPerSecond);
             double absError = Math.abs(currentSpeed - targetSpeed);
 
             //2. Adds up the absolute errors to the cumulative error 

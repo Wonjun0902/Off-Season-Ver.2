@@ -22,7 +22,7 @@ public class kSTuningCommand extends SubsystemBase{
     private double currentVolts = 0.0;
     private double tunedkS = 0.0;
 
-    public Command kSTuningCommand(double voltsPerLoop){
+    public Command kSTuningCommand(double voltsPerLoop, double gearRatio){
     return run(
         () -> {
             // 1. Add the small increment (happens every 20ms)
@@ -36,7 +36,7 @@ public class kSTuningCommand extends SubsystemBase{
         currentVolts = 0.0;
     })
     .until(() -> {
-        double currentSpeed = Math.abs(motorExecute.getMotorSpeed().in(RotationsPerSecond));
+        double currentSpeed = Math.abs(motorExecute.getMotorSpeed(gearRatio).in(RotationsPerSecond));
         return currentSpeed > 0.05;
     })
     .finallyDo((interrupted) -> {

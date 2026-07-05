@@ -36,11 +36,11 @@ public class kPTuningCommand extends SubsystemBase{
      * @param duration test duration for accuracy 
      * @param maxkP max kP for safety issues 
      */
-    public Command kPTuningCommand(double kPIncrement, double targetSpeed, double duration, double maxkP){
+    public Command kPTuningCommand(double kPIncrement, double targetSpeed, double duration, double maxkP, double gearRatio){
         return run(() -> {
 
             //1. Calculate the current error of Speed
-            double currentSpeed = motorExecute.getMotorSpeed().in(RadiansPerSecond);
+            double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RadiansPerSecond);
             double absError = Math.abs(currentSpeed - targetSpeed);
 
             //2. Adds the absolute error to the cumulative error 

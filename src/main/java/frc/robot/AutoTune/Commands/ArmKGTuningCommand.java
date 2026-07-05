@@ -21,13 +21,13 @@ public class ArmKGTuningCommand extends SubsystemBase{
      * @param setUpPosition 
      * @param voltsPerLoop
      */
-    public Command armKGTuningCommand(double setUpVolts, double setUpPosition, double voltsPerLoop){
+    public Command armKGTuningCommand(double setUpVolts, double setUpPosition, double voltsPerLoop, double gearRatio){
 
         Command setUpArm= run(() -> {
             motorExecute.setMotorVoltage(setUpVolts);
         })
         .until(() -> {
-            double position = motorExecute.getMotorPosition().in(Rotation);
+            double position = motorExecute.getMotorPosition(gearRatio).in(Rotation);
             return position >= setUpPosition;
         });
 
@@ -39,7 +39,7 @@ public class ArmKGTuningCommand extends SubsystemBase{
             currentVoltage = 0.0;
         })
         .until(() -> {
-            double armSpeed = motorExecute.getMotorSpeed().in(RotationsPerSecond);
+            double armSpeed = motorExecute.getMotorSpeed(gearRatio).in(RotationsPerSecond);
             return armSpeed >= 0.0;
         })
         .finallyDo((interrupted) -> {
