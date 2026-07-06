@@ -65,7 +65,7 @@ public class kPTuningCommandTQ {
             
             double kSTQ = kSTuningCommandTQ.getKSTQ();
             double kVTQ = kVTuningCommandTQ.getkVTQ();
-            double ffCurrent = kSTQ + (kVTQ * targetSpeed);
+            double ffCurrent = kSTQ * Math.signum(currentSpeed) + (kVTQ * targetSpeed);
 
             motorExecute.setMotorCurrent(pidCurrent+ ffCurrent);
 
