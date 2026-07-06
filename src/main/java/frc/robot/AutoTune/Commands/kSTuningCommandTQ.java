@@ -22,9 +22,10 @@ public class kSTuningCommandTQ {
     private double tunedkS = 0.0;
 
     public Command kSTuningCommandTQ(double ampsPerLoop, double gearRatio, MotorExecute motorExecute){
-        return Commands.run(() -> {
-            //Initialize the amps to 0 at the start 
+        //Initialize the amps to 0 at the start 
             currentAmps = 0.0;
+            
+        return Commands.run(() -> {
 
             //1. Add the small increment 
             currentAmps += ampsPerLoop;
