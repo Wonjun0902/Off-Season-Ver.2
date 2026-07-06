@@ -24,6 +24,9 @@ public class kSTuningCommand{
     public Command kSTuningCommand(double voltsPerLoop, double gearRatio, MotorExecute motorExecute){
     return Commands.run(
         () -> {
+            //Initialize currentVolts to 0 at the start 
+            currentVolts = 0.0;
+
             // 1. Add the small increment (happens every 20ms)
             currentVolts += voltsPerLoop;
             

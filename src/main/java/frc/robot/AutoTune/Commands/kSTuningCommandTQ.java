@@ -23,6 +23,9 @@ public class kSTuningCommandTQ {
 
     public Command kSTuningCommandTQ(double ampsPerLoop, double gearRatio, MotorExecute motorExecute){
         return Commands.run(() -> {
+            //Initialize the amps to 0 at the start 
+            currentAmps = 0.0;
+
             //1. Add the small increment 
             currentAmps += ampsPerLoop;
 
@@ -47,7 +50,7 @@ public class kSTuningCommandTQ {
     }
 
     public double getKSTQ(){
-        return SmartDashboard.getNumber("kS Value TQFOC", currentAmps);
+        return SmartDashboard.getNumber("kS Value TQFOC", tunedkS);
     }
 
 }
