@@ -1,4 +1,4 @@
-package frc.robot.AutoTune.Commands;
+package frc.robot.AutoTune.Commands.StandardPID;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,7 +24,7 @@ public class kSTuningCommand{
     public Command kSTuningCommand(double voltsPerLoop, double gearRatio, MotorExecute motorExecute){
         //Initialize currentVolts to 0 at the start 
         currentVolts = 0.0;
-        
+
         return Commands.run(
         () -> {
             // 1. Add the small increment (happens every 20ms)

@@ -1,4 +1,4 @@
-package frc.robot.AutoTune.Commands;
+package frc.robot.AutoTune.Commands.TorqueCurentFOC;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;

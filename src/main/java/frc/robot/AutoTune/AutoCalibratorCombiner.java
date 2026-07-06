@@ -1,14 +1,13 @@
 package frc.robot.AutoTune;
 
-import frc.robot.AutoTune.Commands.kVTuningCommand;
+import frc.robot.AutoTune.Commands.StandardPID.kDTuningCommand;
+import frc.robot.AutoTune.Commands.StandardPID.kPTuningCommand;
+import frc.robot.AutoTune.Commands.StandardPID.kSTuningCommand;
+import frc.robot.AutoTune.Commands.StandardPID.kVTuningCommand;
 import frc.robot.AutoTune.HardWare.LazyTunableFXS;
 import frc.robot.AutoTune.HardWare.LazyTunableTalon;
 import frc.robot.AutoTune.HardWare.TunableMotor;
-import frc.robot.AutoTune.Commands.kSTuningCommand;
-import frc.robot.AutoTune.Commands.kPTuningCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.AutoTune.Commands.kDTuningCommand;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.units.measure.AngularVelocity;

@@ -1,4 +1,4 @@
-package frc.robot.AutoTune.Commands;
+package frc.robot.AutoTune.Commands.TorqueCurentFOC;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,7 +24,7 @@ public class kSTuningCommandTQ {
     public Command kSTuningCommandTQ(double ampsPerLoop, double gearRatio, MotorExecute motorExecute){
         //Initialize the amps to 0 at the start 
             currentAmps = 0.0;
-            
+
         return Commands.run(() -> {
 
             //1. Add the small increment 
