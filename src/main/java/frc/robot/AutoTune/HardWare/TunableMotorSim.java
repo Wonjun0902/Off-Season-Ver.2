@@ -21,6 +21,10 @@ public class TunableMotorSim implements TunableMotor{
     public TunableMotorSim(int motorID, CANBus canBus, double gearRatio){
         simMotor = new DCMotorSim(LinearSystemId.createDCMotorSystem(gearbox, 0.1, 1), gearbox);
     }
+    
+    public TunableMotorSim(int motorID, double gearRatio) {
+    this(motorID, new com.ctre.phoenix6.CANBus(), gearRatio); 
+    }
 
     @Override
     public void setMotorVoltage(double volts){
