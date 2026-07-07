@@ -50,6 +50,10 @@ public class LazyTunableFXS implements TunableMotor{
         motor.optimizeBusUtilization();
     }
 
+    public LazyTunableFXS(int motorID, double gearRatio) {
+    this(motorID, new com.ctre.phoenix6.CANBus(), gearRatio); 
+    }
+    
     @Override
     public void setMotorVoltage(double volts){
         this.motor.setControl(voltageOut.withOutput(Volts.of(volts)));

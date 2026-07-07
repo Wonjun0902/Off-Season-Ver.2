@@ -48,6 +48,11 @@ public class LazyTunableTalon implements TunableMotor{
         motor.optimizeBusUtilization();
     }
 
+    // Inside LazyTunableTalon.java
+    public LazyTunableTalon(int motorID, double gearRatio) {
+    this(motorID, new com.ctre.phoenix6.CANBus(), gearRatio); // Automatically passes a default bus
+    }
+
     @Override
     public AngularAcceleration getAcceleration() {
         return this.motor.getAcceleration().getValue();
