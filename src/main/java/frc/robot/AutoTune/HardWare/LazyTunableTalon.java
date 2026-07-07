@@ -20,8 +20,9 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.lib.LazyCTRE;
-import frc.lib.LazyCTRE.MotorTelemetry;
+
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Amps;
 
 
 public class LazyTunableTalon implements TunableMotor{
@@ -36,8 +37,8 @@ public class LazyTunableTalon implements TunableMotor{
     private final VelocityTorqueCurrentFOC velTFOC = new VelocityTorqueCurrentFOC(0.0);
     private final PositionVoltage posVoltage = new PositionVoltage(0.0).withEnableFOC(this.enableFOC);
     private final VelocityVoltage velVoltage = new VelocityVoltage(0.0).withEnableFOC(this.enableFOC);
-    private final VoltageOut voltageOut = new VoltageOut(0.0);
-    private final TorqueCurrentFOC torqueCurrentFOC = new TorqueCurrentFOC(0.0);
+    private final VoltageOut voltageOut = new VoltageOut(Volts.of(0.0)).withEnableFOC(enableFOC);
+    private final TorqueCurrentFOC torqueCurrentFOC = new TorqueCurrentFOC(Amps.of(0.0));
 
     public LazyTunableTalon(int motorID, CANBus canBus, double gearRatio){
         motor = new TalonFX(motorID, canBus);
@@ -54,7 +55,7 @@ public class LazyTunableTalon implements TunableMotor{
 
     @Override
     public void setMotorVoltage(double volts){
-        this.motor.setVoltage(volts);
+        this.motor.setControl(voltageOut.withOutput(Volts.of(volts)));
     }
 
     @Override

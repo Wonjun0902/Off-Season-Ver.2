@@ -24,13 +24,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import frc.lib.LazyCTRE;
 import frc.lib.LazyCTRE.MotorTelemetry;
 
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Amps;
+
 public class LazyTunableFXS implements TunableMotor{
 
     private TalonFXS motor;
 
     private boolean enableFOC = true;
-    private Voltage inputVoltage;
-    private Current inputCurrent;
 
     private final MotionMagicVoltage mmPosVoltage = new MotionMagicVoltage(0.0).withEnableFOC(this.enableFOC);
     private final MotionMagicExpoVoltage mmPosExpVoltage = new MotionMagicExpoVoltage(0.0).withEnableFOC(this.enableFOC);
@@ -38,8 +39,8 @@ public class LazyTunableFXS implements TunableMotor{
     private final VelocityTorqueCurrentFOC velTFOC = new VelocityTorqueCurrentFOC(0.0);
     private final PositionVoltage posVoltage = new PositionVoltage(0.0).withEnableFOC(this.enableFOC);
     private final VelocityVoltage velVoltage = new VelocityVoltage(0.0).withEnableFOC(this.enableFOC);
-    private final VoltageOut voltageOut = new VoltageOut(inputVoltage);
-    private final TorqueCurrentFOC torqueCurrentFOC = new TorqueCurrentFOC(inputCurrent);
+    private final VoltageOut voltageOut = new VoltageOut(Volts.of(0.0)).withEnableFOC(enableFOC);
+    private final TorqueCurrentFOC torqueCurrentFOC = new TorqueCurrentFOC(Amps.of(0.0));
 
     public LazyTunableFXS(int motorID, CANBus canBus, double gearRatio){
         motor = new TalonFXS(motorID, canBus);
@@ -51,12 +52,12 @@ public class LazyTunableFXS implements TunableMotor{
 
     @Override
     public void setMotorVoltage(double volts){
-        this.motor.setVoltage(volts);
+        this.motor.setControl(voltageOut.withOutput(Volts.of(volts)));
     }
 
     @Override
     public void setMotorCurrent(double current){
-        this.motor.setControl(torqueCurrentFOC.withOutput(inputCurrent));
+        this.motor.setControl(torqueCurrentFOC.withOutput(Amps.of(current)));
     }
 
     @Override
