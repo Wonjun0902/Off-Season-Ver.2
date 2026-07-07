@@ -1,5 +1,7 @@
 package frc.robot.AutoTune.HardWare;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -10,11 +12,15 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Amps;
 
-public class TunableMotorSim implements TunableMotor{
+import com.ctre.phoenix6.CANBus;
 
+public class TunableMotorSim implements TunableMotor{
+    private DCMotor gearbox;
     private DCMotorSim simMotor;
 
-    public TunableMotorSim(){}
+    public TunableMotorSim(int motorID, CANBus canBus, double gearRatio){
+        simMotor = new DCMotorSim(LinearSystemId.createDCMotorSystem(gearbox, 0.1, 1), gearbox);
+    }
 
     @Override
     public void setMotorVoltage(double volts){
