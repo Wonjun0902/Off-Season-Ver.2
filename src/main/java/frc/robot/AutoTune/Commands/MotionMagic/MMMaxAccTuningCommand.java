@@ -27,8 +27,6 @@ public class MMMaxAccTuningCommand {
     private double lastTime;
     private double lastSpeed;
 
-    private double lowestScore = Double.MAX_VALUE;
-
     private boolean isSpiked;
     private double accumulativeAcceleration;
 
