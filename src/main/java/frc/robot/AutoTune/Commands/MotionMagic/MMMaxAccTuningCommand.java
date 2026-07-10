@@ -27,6 +27,11 @@ public class MMMaxAccTuningCommand {
     private double lastTime;
     private double lastSpeed;
 
+    private double lowestScore = Double.MAX_VALUE;
+
+    private boolean isSpiked;
+    private double accumulativeAcceleration;
+
     public Command maxAccTuningCommand(double gearRatio, double duration, double maxVolts, MotorExecute motorExecute){
         return Commands.run(() -> {
         //Apply (almost)maximum voltage to the motor 
@@ -41,8 +46,15 @@ public class MMMaxAccTuningCommand {
         double dt = currentTime - lastTime;
         double acc = dv / dt;
 
-        //Update maximum acceleration
-        if(acc > maxAcc){
+        //Encoder Noise Spikes Prevention 
+        accumulativeAcceleration += acc;
+        double averageAcc = accumulativeAcceleration / duration * 50; //Multiply by 50 bc there are 50 loops per second
+        if(maxAcc > averageAcc * 4){ //Times 4 is a placeholder value, idk what to put here, change later
+            isSpiked = true; 
+        }
+
+        //Update maxAcc
+        if(acc > maxAcc && !isSpiked){
             maxAcc = acc;
         }
 
