@@ -2,10 +2,8 @@ package frc.robot.AutoTune.Commands.MotionMagic;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.AutoTune.MotorExecute;
-import frc.robot.AutoTune.Commands.StandardPID.kSTuningCommand;
-import frc.robot.AutoTune.Commands.StandardPID.kVTuningCommand;
 
-import java.util.spi.CurrencyNameProvider;
+import edu.wpi.first.math.filter.LinearFilter;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,6 +24,8 @@ public class MMCruiseVTuningCommand {
 
     private double cruiseV;
 
+    private LinearFilter speedFilter;
+
     public Command cruiseVTuningCommand(double gearRatio, double duration, double maxVolts, MotorExecute motorExecute){
         return Commands.run(() -> {
             //Apply almost maximum voltage to the motor 
@@ -34,9 +34,13 @@ public class MMCruiseVTuningCommand {
             //Gets the speed and the time right now 
             double currentSpeed = motorExecute.getMotorSpeed(gearRatio).magnitude();
 
-            //Update maximum Speed
-            if(currentSpeed > cruiseV){
-                cruiseV = currentSpeed;
+            //Update maximum Speed with Filter
+            if(stepTimer.hasElapsed(0.0)){
+                double rawSpeed = currentSpeed;
+                double smoothedSpeed = speedFilter.calculate(rawSpeed);
+                if(smoothedSpeed > cruiseV){
+                    cruiseV = smoothedSpeed;
+                }
             }
         })
         .until(() -> {
@@ -45,10 +49,12 @@ public class MMCruiseVTuningCommand {
         .beforeStarting(() -> {
             cruiseV = 0.0;
             stepTimer.restart();
+
+            speedFilter = LinearFilter.movingAverage(5);
         })
         .finallyDo((interrupted) -> {
             if(!interrupted){
-                tunedCruiseV = cruiseV;
+                tunedCruiseV = cruiseV * 0.8;
 
                 SmartDashboard.putNumber("Cruise Velocity Value: ", tunedCruiseV);
             }
