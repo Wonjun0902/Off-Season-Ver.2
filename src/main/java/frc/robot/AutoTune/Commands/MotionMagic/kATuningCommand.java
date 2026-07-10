@@ -74,7 +74,12 @@ public class kATuningCommand {
 
                 double acc = dv/dt;
 
-                tunedkA = stepVolts / acc;
+                if(acc > 0.001){
+                    tunedkA = stepVolts / acc;
+                }
+                else{
+                    tunedkA = 0.0;
+                }
 
                 SmartDashboard.putNumber("kA Value: ", tunedkA);
             }
