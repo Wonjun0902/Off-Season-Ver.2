@@ -2,8 +2,10 @@ package frc.robot.AutoTune.Commands.MotionMagic;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.AutoTune.MotorExecute;
-import frc.robot.AutoTune.Commands.StandardPID.kSTuningCommand;
-import frc.robot.AutoTune.Commands.StandardPID.kVTuningCommand;
+
+import javax.sound.sampled.Line;
+
+import edu.wpi.first.math.filter.LinearFilter;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,8 +29,7 @@ public class MMMaxAccTuningCommand {
     private double lastTime;
     private double lastSpeed;
 
-    private boolean isSpiked;
-    private double accumulativeAcceleration;
+    private LinearFilter accFilter;
 
     public Command maxAccTuningCommand(double gearRatio, double duration, double maxVolts, MotorExecute motorExecute){
         return Commands.run(() -> {
@@ -44,16 +45,15 @@ public class MMMaxAccTuningCommand {
         double dt = currentTime - lastTime;
         double acc = dv / dt;
 
-        //Encoder Noise Spikes Prevention 
-        accumulativeAcceleration += acc;
-        double averageAcc = accumulativeAcceleration / duration * 50; //Multiply by 50 bc there are 50 loops per second
-        if(maxAcc > averageAcc * 4){ //Times 4 is a placeholder value, idk what to put here, change later
-            isSpiked = true; 
-        }
+        //Update max acc with linear filter 
+        if(dt > 0.0){
+            double rawAcc = dv / dt;
 
-        //Update maxAcc
-        if(acc > maxAcc && !isSpiked){
-            maxAcc = acc;
+            double smoothedAcc = accFilter.calculate(rawAcc);
+
+            if(smoothedAcc > maxAcc){
+                maxAcc = smoothedAcc;
+            }
         }
 
         //Update variables for next loop 
@@ -69,6 +69,8 @@ public class MMMaxAccTuningCommand {
             lastTime = 0.0;
             lastSpeed = 0.0;
             stepTimer.restart();
+
+            accFilter = LinearFilter.movingAverage(5);
         })
         .finallyDo((interrupted) -> {
             if(!interrupted){
