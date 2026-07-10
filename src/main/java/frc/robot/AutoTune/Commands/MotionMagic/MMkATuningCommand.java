@@ -37,8 +37,6 @@ public class MMkATuningCommand {
             double kV = kVTuningCommand.getKV();
             appliedVoltage = kS * Math.signum(targetSpeed) + kV * targetSpeed;
 
-            motorExecute.setMotorVoltage(appliedVoltage);
-
             //Maintain a steady velocity for a certain duration for stability(might change the time from 1.5 sec)
             if(!stepTimer.hasElapsed(1.5)){
                 motorExecute.setMotorVoltage(appliedVoltage);
