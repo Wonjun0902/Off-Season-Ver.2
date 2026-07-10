@@ -3,8 +3,6 @@ package frc.robot.AutoTune.Commands.MotionMagic;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.AutoTune.MotorExecute;
 
-import javax.sound.sampled.Line;
-
 import edu.wpi.first.math.filter.LinearFilter;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -43,7 +41,6 @@ public class MMMaxAccTuningCommand {
         //Get the derivative of the speed for acc
         double dv = currentSpeed - lastSpeed;
         double dt = currentTime - lastTime;
-        double acc = dv / dt;
 
         //Update max acc with linear filter 
         if(dt > 0.0){
