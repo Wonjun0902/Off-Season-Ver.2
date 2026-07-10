@@ -25,20 +25,32 @@ public class kATuningCommand {
     private double appliedVoltage;
     private double tunedkA;
 
+    private boolean isAccelerating;
+    private double startSpeed;
+    private double startTime;
+
     public Command kATuningCommand(double defaultSpeed, double stepVolts, double gearRatio, double duration, MotorExecute motorExecute, kSTuningCommand kSTuningCommand, kVTuningCommand kVTuningCommand){
 
         return Commands.run(() -> {
-            //1. Apply the motor with the default speed with kS and kV
+            //Apply the motor with the default speed with kS and kV
             double kS = kSTuningCommand.getKS();
             double kV = kVTuningCommand.getKV();
-            double appliedVoltage = kS * Math.signum(defaultSpeed) + kV * defaultSpeed;
+            appliedVoltage = kS * Math.signum(defaultSpeed) + kV * defaultSpeed;
 
             motorExecute.setMotorVoltage(appliedVoltage);
 
-            //Applying increasing voltage when the motor is at a steady velocity (might change the time from 1.5 sec)
-            if(stepTimer.hasElapsed(1.5)){
-                appliedVoltage += stepVolts;
+            //Maintain a steady velocity for a certain duration for stability(might change the time from 1.5 sec)
+            if(!stepTimer.hasElapsed(1.5)){
                 motorExecute.setMotorVoltage(appliedVoltage);
+            }
+            //Apply increasing voltage to the motor
+            else{
+                if(!isAccelerating){
+                    isAccelerating = true;
+                    startSpeed = motorExecute.getMotorSpeed(gearRatio).magnitude();
+                    startTime = stepTimer.get();
+                }
+                motorExecute.setMotorVoltage(appliedVoltage + stepVolts);
             }
         })
         //Run the increment until the motor has run for a certain period
@@ -46,18 +58,28 @@ public class kATuningCommand {
             return stepTimer.hasElapsed(duration);
         })
         .beforeStarting(() -> {
+            startSpeed = 0.0;
+            startTime = 0.0;
+            tunedkA = 0.0;
+            isAccelerating = false;
             stepTimer.start();
         })
         .finallyDo((interrupted) -> {
-            double finalSpeed = motorExecute.getMotorSpeed(gearRatio).magnitude();
-            double acc = (finalSpeed - defaultSpeed) / duration;
-            double tunedkA = appliedVoltage / acc;
+            if(!interrupted && isAccelerating){
+                double finalSpeed = motorExecute.getMotorSpeed(gearRatio).magnitude();
+                double endTime = stepTimer.get();
 
-            motorExecute.stopMotor();
+                double dv = finalSpeed - startSpeed;
+                double dt = endTime - startTime;
 
-            if(!interrupted){
+                double acc = dv/dt;
+
+                tunedkA = stepVolts / acc;
+
                 SmartDashboard.putNumber("kA Value: ", tunedkA);
             }
+
+            motorExecute.stopMotor();
         });
     }
 
