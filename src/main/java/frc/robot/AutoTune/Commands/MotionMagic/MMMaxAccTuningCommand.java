@@ -14,6 +14,66 @@ public class MMMaxAccTuningCommand {
 
     /**
      * Max Acceleration Tuning Command 
+     * Give the motor the maximum output - 10~12V and calcualte the maximum acceleration it gets
+     * Make sure that the motor starts from 0.0 rot per sec
+     * @param targetSpeed
+     * @param gearRatio 
+     * @param duration 
+     * @param maxVolts -> might be different for all subsystems so I'll put in as a parameter 
      */
+    private Timer stepTimer = new Timer();
+    private double tunedMaxAcc;
+
+    private double maxAcc;
+    private double lastTime;
+    private double lastSpeed;
+
+    public Command maxAccTuningCommand(double targetSpeed, double gearRatio, double duration, double maxVolts, MotorExecute motorExecute, kSTuningCommand kSTuningCommand, kVTuningCommand kVTuningCommand, MMkATuningCommand mmkATuningCommand){
+        return Commands.run(() -> {
+        //Apply the 11V to the motor 
+        motorExecute.setMotorVoltage(maxVolts);
+        
+        //Gets the speed and the time right at teh instance
+        double currentSpeed = motorExecute.getMotorSpeed(gearRatio).magnitude();
+        double currentTime = stepTimer.get();
+        
+        //Get the derivative of the speed for acc
+        double dv = currentSpeed - lastSpeed;
+        double dt = currentTime - lastTime;
+        double acc = dv / dt;
+
+        //Update maximum acceleration
+        if(acc > maxAcc){
+            maxAcc = acc;
+        }
+
+        //Update variables for next loop 
+        lastSpeed = currentSpeed;
+        lastTime = currentTime;
+        })
+        //Run until timer has elasped the set time duration(parameter)
+        .until(() -> {
+            return stepTimer.hasElapsed(duration);
+        })
+        .beforeStarting(() -> {
+            maxAcc = 0.0;
+            lastTime = 0.0;
+            lastSpeed = 0.0;
+            stepTimer.restart();
+        })
+        .finallyDo((interrupted) -> {
+            if(!interrupted){
+                tunedMaxAcc = maxAcc * 0.8; //Multiply by 0.8 cause I think going to the physical limit might overload the bot
+
+                SmartDashboard.putNumber("Max Acceleration Value: ", tunedMaxAcc);
+            }
+
+            motorExecute.stopMotor();
+        });
+    }
+
+    public double getMaxAcc(){
+        return SmartDashboard.getNumber("Max Acceleration Value: ", tunedMaxAcc);
+    }
 
 }
