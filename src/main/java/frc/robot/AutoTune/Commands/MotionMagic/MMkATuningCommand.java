@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 // This kA Tuning Command is only for MM and MMExpo. 
 // Not necessary for standard PID 
-public class kATuningCommand {
+public class MMkATuningCommand {
     /**
      * kA Tuning Command 
      * Give the motor sudden rush of volts multiple times to calculate the additional voltage needed 
