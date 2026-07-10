@@ -45,15 +45,15 @@ public class kVTuningCommand{
             return currentSpeed.gte(threshold);
         })
         .finallyDo((interrupted) -> {
-            double kS = kSTuningCommand.getKS();
-            double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RotationsPerSecond);
-            tunedkV = (currentVoltage - kS) / (currentSpeed);
-
-            motorExecute.stopMotor();
-
             if(!interrupted){
+                double kS = kSTuningCommand.getKS();
+                double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RotationsPerSecond);
+                tunedkV = (currentVoltage - kS) / (currentSpeed);
+
                 SmartDashboard.putNumber("kV Value: ", tunedkV);
             }
+            
+            motorExecute.stopMotor();
         });
     }
 

@@ -44,11 +44,12 @@ public class kSTuningCommand{
         return currentSpeed > 0.05;
     })
     .finallyDo((interrupted) -> {
-        motorExecute.stopMotor();
         if(!interrupted){
             tunedkS = currentVolts;
             SmartDashboard.putNumber("kS Value: ", currentVolts);
         }
+
+        motorExecute.stopMotor();
     });
     }
 
