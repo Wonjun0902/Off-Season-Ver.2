@@ -9,6 +9,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands; 
 
+// This kS Tuning Command can be used for any type of tuning command for free spin - standard PID, MM, MMExpo as this is just a feedforwad
+// But becareful to apply the volts into the right direction for position based mechanisms 
 public class kSTuningCommand{
 
     /**
