@@ -16,7 +16,6 @@ public class MMMaxAccTuningCommand {
      * Max Acceleration Tuning Command 
      * Give the motor the maximum output - 10~12V and calcualte the maximum acceleration it gets
      * Make sure that the motor starts from 0.0 rot per sec
-     * @param targetSpeed
      * @param gearRatio 
      * @param duration 
      * @param maxVolts -> might be different for all subsystems so I'll put in as a parameter 
@@ -28,9 +27,9 @@ public class MMMaxAccTuningCommand {
     private double lastTime;
     private double lastSpeed;
 
-    public Command maxAccTuningCommand(double targetSpeed, double gearRatio, double duration, double maxVolts, MotorExecute motorExecute, kSTuningCommand kSTuningCommand, kVTuningCommand kVTuningCommand, MMkATuningCommand mmkATuningCommand){
+    public Command maxAccTuningCommand(double gearRatio, double duration, double maxVolts, MotorExecute motorExecute){
         return Commands.run(() -> {
-        //Apply the 11V to the motor 
+        //Apply (almost)maximum voltage to the motor 
         motorExecute.setMotorVoltage(maxVolts);
         
         //Gets the speed and the time right at teh instance
