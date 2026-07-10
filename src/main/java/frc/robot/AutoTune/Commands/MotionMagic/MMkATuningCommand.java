@@ -15,7 +15,7 @@ public class MMkATuningCommand {
     /**
      * kA Tuning Command 
      * Give the motor sudden rush of volts multiple times to calculate the additional voltage needed 
-     * @param defaultSpeed - default volts that would run the motor at a certain speed, with kS ofc
+     * @param targetSpeed - default volts that would run the motor at a certain speed, with kS ofc
      * @param stepVolts
      * @param gearRatio 
      * @param motorExecute
@@ -29,13 +29,13 @@ public class MMkATuningCommand {
     private double startSpeed;
     private double startTime;
 
-    public Command kATuningCommand(double defaultSpeed, double stepVolts, double gearRatio, double duration, MotorExecute motorExecute, kSTuningCommand kSTuningCommand, kVTuningCommand kVTuningCommand){
+    public Command kATuningCommand(double targetSpeed, double stepVolts, double gearRatio, double duration, MotorExecute motorExecute, kSTuningCommand kSTuningCommand, kVTuningCommand kVTuningCommand){
 
         return Commands.run(() -> {
             //Apply the motor with the default speed with kS and kV
             double kS = kSTuningCommand.getKS();
             double kV = kVTuningCommand.getKV();
-            appliedVoltage = kS * Math.signum(defaultSpeed) + kV * defaultSpeed;
+            appliedVoltage = kS * Math.signum(targetSpeed) + kV * targetSpeed;
 
             motorExecute.setMotorVoltage(appliedVoltage);
 
