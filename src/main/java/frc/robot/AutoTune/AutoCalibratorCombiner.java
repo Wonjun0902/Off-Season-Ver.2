@@ -13,7 +13,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.units.measure.AngularVelocity;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.CANBus; 
+
 public class AutoCalibratorCombiner extends SubsystemBase{
+
+    CANBus defaultBus = new CANBus();
 
     private final kSTuningCommand kSTuningCommand = new kSTuningCommand();
     private final kVTuningCommand kVTuningCommand = new kVTuningCommand();
@@ -28,9 +32,9 @@ public class AutoCalibratorCombiner extends SubsystemBase{
     //Implement with Actual Values 
     public AutoCalibratorCombiner(){
         //Initialize Motors 
-        motor1 = new MotorExecute(new LazyTunableFXS(0, null, 0)); 
-        motor2 = new MotorExecute(new LazyTunableTalon(0, null, 0));
-        motor3 = new MotorExecute(new LazyTunableTalon(0, null, 0));
+        motor1 = new MotorExecute(new LazyTunableFXS(0, 0)); 
+        motor2 = new MotorExecute(new LazyTunableTalon(0, 0));
+        motor3 = new MotorExecute(new LazyTunableTalon(0, 0));
     }
 
     /**
