@@ -23,6 +23,7 @@ public class MMCruiseVTuningCommand {
     private double tunedCruiseV;
 
     private double cruiseV;
+    private double smoothedSpeed;
 
     private LinearFilter speedFilter;
 
@@ -34,28 +35,20 @@ public class MMCruiseVTuningCommand {
             //Gets the speed and the time right now 
             double currentSpeed = motorExecute.getMotorSpeed(gearRatio).magnitude();
 
-            //Update maximum Speed with Filter
-            if(stepTimer.hasElapsed(0.0)){
-                double rawSpeed = currentSpeed;
-                double smoothedSpeed = speedFilter.calculate(rawSpeed);
-                if(smoothedSpeed > cruiseV){
-                    cruiseV = smoothedSpeed;
-                }
-            }
+            //Calculate the average speed of the motor using linear filter
+            smoothedSpeed = speedFilter.calculate(currentSpeed);
         })
         .until(() -> {
             return stepTimer.hasElapsed(duration);
         })
         .beforeStarting(() -> {
-            cruiseV = 0.0;
             stepTimer.restart();
-
+            smoothedSpeed = 0.0;
             speedFilter = LinearFilter.movingAverage(5);
         })
         .finallyDo((interrupted) -> {
             if(!interrupted){
-                tunedCruiseV = cruiseV * 0.8;
-
+                tunedCruiseV = smoothedSpeed * 0.9; //Multiply by 0.9 cause having the motor to spin at its fullist won't do any good on teh motor
                 SmartDashboard.putNumber("Cruise Velocity Value: ", tunedCruiseV);
             }
             motorExecute.stopMotor();
@@ -63,6 +56,6 @@ public class MMCruiseVTuningCommand {
     }
 
     public double getCruiseVelocity(){
-        return SmartDashboard.getNumber("Cruse Velocity Value: ", tunedCruiseV);
+        return SmartDashboard.getNumber("Cruise Velocity Value: ", tunedCruiseV);
     }
 }
