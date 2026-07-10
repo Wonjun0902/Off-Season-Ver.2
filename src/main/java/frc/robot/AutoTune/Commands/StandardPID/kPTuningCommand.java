@@ -89,6 +89,8 @@ public class kPTuningCommand{
                 pidController.setP(testkP);
                 cumulativeError = 0.0;
                 maxWindowError = 0.0;
+
+                isreachedTarget = false;
             }
         })
         .beforeStarting(() -> {
@@ -99,6 +101,8 @@ public class kPTuningCommand{
             lowestScore = Double.MAX_VALUE;
             cumulativeError = 0.0;
             maxWindowError = 0.0;
+
+            isreachedTarget = false;
             
             stepTimer.restart();
         })
