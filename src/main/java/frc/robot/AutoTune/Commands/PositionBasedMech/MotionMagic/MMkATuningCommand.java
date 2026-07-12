@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 // This kA Tuning Command is only for MM and MMExpo. 
 // Not necessary for standard PID 
+
+//It is very important that you put the right direction of the motor -> positive or negative direction
+//If you don't consider that, the motor will likely stop due to the safety check of the setMotorVoltagePOS method
 public class MMkATuningCommand {
     /**
      * kA Tuning Command 

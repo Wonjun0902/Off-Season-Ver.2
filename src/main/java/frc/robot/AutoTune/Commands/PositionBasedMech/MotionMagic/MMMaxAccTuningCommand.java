@@ -10,6 +10,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands; 
 
 //Class for calculating the max Acceleration -> for MM only!
+
+//It is very important that you put the right direction of the motor -> positive or negative direction
+//If you don't consider that, the motor will likely stop due to the safety check of the setMotorVoltagePOS method
 public class MMMaxAccTuningCommand {
 
     /**
