@@ -9,9 +9,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.AutoTune.MotorExecute;
 import frc.robot.AutoTune.Commands.StandardPID.kSTuningCommand;
 
+import edu.wpi.first.wpilibj2.command.Commands; 
+
 //It is very important that you put the right direction of the motor -> positive or negative direction
 //If you don't consider that, the motor will likely stop due to the safety check of the setMotorVoltagePOS method
-public class kGTuningCommandPOS extends SubsystemBase{
+public class kGTuningCommandPOS{
 
     private MotorExecute motorExecute;
     private kSTuningCommand kSTuningCommand;
@@ -64,6 +66,27 @@ public class kGTuningCommandPOS extends SubsystemBase{
         });
 
         return setUpElevator.andThen(getKGCommand);
+    }
+
+    //Set up position has to be near the forward / backward softlimit
+    public Command setUpCommand(double setUpVolts, double setUpPosition, double voltsPerLoop, double gearRatio){
+        return Commands.run(() -> {
+            //Set up the motor to be in a certain 
+            motorExecute.setMotorVoltagePOS(voltsPerLoop);
+        })
+        .until(() -> {
+            double motorPosition = motorExecute.getMotorPosition(gearRatio).magnitude();
+            return motorPosition >= setUpPosition;
+        })
+        .finallyDo(() -> {
+            motorExecute.stopMotor();
+        });
+    }
+
+    public Command getKGCommand(double setUpVolts, double setUpPosition, double voltsPerLoop, double gearRatio){
+        return Commands.run(() -> {
+            //Apply the same voltage that was used to set up
+        });
     }
 
     public double getKG(){
