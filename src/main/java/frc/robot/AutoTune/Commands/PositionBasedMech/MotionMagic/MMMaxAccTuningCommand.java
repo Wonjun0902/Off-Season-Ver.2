@@ -32,7 +32,7 @@ public class MMMaxAccTuningCommand {
     public Command maxAccTuningCommand(double gearRatio, double duration, double maxVolts, MotorExecute motorExecute){
         return Commands.run(() -> {
         //Apply (almost)maximum voltage to the motor 
-        motorExecute.setMotorVoltage(maxVolts);
+        motorExecute.setMotorVoltagePOS(maxVolts);
         
         //Gets the speed and the time right at teh instance
         double currentSpeed = motorExecute.getMotorSpeed(gearRatio).magnitude();

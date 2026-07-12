@@ -39,7 +39,7 @@ public class MMkATuningCommand {
 
             //Maintain a steady velocity for a certain duration for stability(might change the time from 1.5 sec)
             if(!stepTimer.hasElapsed(1.5)){
-                motorExecute.setMotorVoltage(appliedVoltage);
+                motorExecute.setMotorVoltagePOS(appliedVoltage);
             }
             //Apply increasing voltage to the motor
             else{
@@ -48,7 +48,7 @@ public class MMkATuningCommand {
                     startSpeed = motorExecute.getMotorSpeed(gearRatio).magnitude();
                     startTime = stepTimer.get();
                 }
-                motorExecute.setMotorVoltage(appliedVoltage + stepVolts);
+                motorExecute.setMotorVoltagePOS(appliedVoltage + stepVolts);
             }
         })
         //Run the increment until the motor has run for a certain period

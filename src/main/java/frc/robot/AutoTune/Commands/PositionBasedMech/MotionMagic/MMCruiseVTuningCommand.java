@@ -30,7 +30,7 @@ public class MMCruiseVTuningCommand {
     public Command cruiseVTuningCommand(double gearRatio, double duration, double maxVolts, MotorExecute motorExecute){
         return Commands.run(() -> {
             //Apply almost maximum voltage to the motor 
-            motorExecute.setMotorVoltage(maxVolts);
+            motorExecute.setMotorVoltagePOS(maxVolts);
 
             //Gets the speed and the time right now 
             double currentSpeed = motorExecute.getMotorSpeed(gearRatio).magnitude();
