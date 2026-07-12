@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.AutoTune.MotorExecute;
 import frc.robot.AutoTune.Commands.StandardPID.kSTuningCommand;
 
-public class ElevatorKGTuningCommand extends SubsystemBase{
+public class kGTuningCommandPOS extends SubsystemBase{
 
     private MotorExecute motorExecute;
     private kSTuningCommand kSTuningCommand;
@@ -51,14 +51,14 @@ public class ElevatorKGTuningCommand extends SubsystemBase{
             return elevatorSpeed >= 0; //Change when the direction of it is different!!!!
         })
         .finallyDo((interrupted) -> {
-            motorExecute.stopMotor();
-
             if(!interrupted){
                 double kS = kSTuningCommand.getKS();
                 tunedkG = currentVoltage - kS;
 
                 SmartDashboard.putNumber("kG Value: ", tunedkG);
             }
+            
+            motorExecute.stopMotor();
         });
 
         return setUpElevator.andThen(getKGCommand);
