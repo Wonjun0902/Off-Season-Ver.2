@@ -21,8 +21,7 @@ public class MMCruiseVTuningCommand {
      */
     private Timer stepTimer = new Timer();
     private double tunedCruiseV;
-
-    private double cruiseV;
+    
     private double smoothedSpeed;
 
     private LinearFilter speedFilter;
