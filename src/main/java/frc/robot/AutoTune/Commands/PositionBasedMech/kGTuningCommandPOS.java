@@ -5,87 +5,44 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.AutoTune.MotorExecute;
-import frc.robot.AutoTune.Commands.StandardPID.kSTuningCommand;
 
+import frc.robot.AutoTune.MotorExecute;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Commands; 
 
 //It is very important that you put the right direction of the motor -> positive or negative direction
 //If you don't consider that, the motor will likely stop due to the safety check of the setMotorVoltagePOS method
 public class kGTuningCommandPOS{
 
-    private MotorExecute motorExecute;
-    private kSTuningCommand kSTuningCommand;
-    private double currentVoltage = 0.0;
+    private double currentVolts;
     public double tunedkG = 0.0;
+    private Timer stepTimer = new Timer();
     /**
      * A kG Tuning Command for an elevator subsystem 
-     * First, I move the elevator to a safe position, a point in the middle or higher with a certain voltage(param setUpVolts)
-     * If there is no kG, the elevator will start to fall. 
-     * I will give the motor a certain voltage starting from 0. And stop supplying the voltage until it stops 
+     * It will be a loop where the code finds the best kG that makes the mechansim hover without falling down. 
+     * For the elevator class, we don't really need to have a specific position that we need to initially set it up to
+     * but for Arm mechs, we need to place the mechanism to be a place where there is maximum gravitational force - horizontal position
      * @param setUpVolts to move the elevator up to a certain position 
      * @param voltsPerLoop for increments for the voltage to make the elevator stands still. 
      */
-    public Command elevatorKGTuningCommand(double setUpVolts, double setUpPosition, double voltsPerLoop, double gearRatio){
+    public Command elevatorKGTuningCommand(double setUpVolts, double voltsPerLoop, double gearRatio, double duration, MotorExecute motorExecute){
+        return Commands.run(() ->{ 
+            //1. Start Adding Increment volts to a certain position -> depends on the mechanism 
+            motorExecute.setMotorVoltagePOS(currentVolts + setUpVolts);
 
-        //Set up the elevator to be in a certain position 
-        Command setUpElevator = run(() -> {
-            motorExecute.setMotorVoltagePOS(setUpVolts);
-        })
-        //Stop when the motor position is gte than the setUpPosition or just when it is equal to the setUpPosition 
-        .until(() -> {
-           double motorPosition = motorExecute.getMotorPosition(gearRatio).in(Rotations);
+            //Check status of the motor 
+            double currentPos = motorExecute.getMotorPosition(gearRatio).magnitude();
+            double currentSpeed = 
 
-           // This is in rotations!!
-           return motorPosition >= setUpPosition;
-        });
+            //Check status after timer is over
+            if(stepTimer.hasElapsed(duration)){
 
-        //Set up the voltage until it stands still in the position 
-        Command getKGCommand = run(() -> {
-            //Add increments to the voltage 
-            currentVoltage += voltsPerLoop;
-
-            //Apply the voltage to the motor 
-            motorExecute.setMotorVoltage(currentVoltage);
-        })
-        .beforeStarting(() -> currentVoltage = 0.0)
-        .until(() -> {
-            double elevatorSpeed = motorExecute.getMotorSpeed(gearRatio).in(RotationsPerSecond);
-            return elevatorSpeed >= 0; //Change when the direction of it is different!!!!
-        })
-        .finallyDo((interrupted) -> {
-            if(!interrupted){
-                double kS = kSTuningCommand.getKS();
-                tunedkG = currentVoltage - kS;
-
-                SmartDashboard.putNumber("kG Value: ", tunedkG);
             }
-            
-            motorExecute.stopMotor();
-        });
 
-        return setUpElevator.andThen(getKGCommand);
-    }
-
-    //Set up position has to be near the forward / backward softlimit
-    public Command setUpCommand(double setUpVolts, double setUpPosition, double voltsPerLoop, double gearRatio){
-        return Commands.run(() -> {
-            //Set up the motor to be in a certain 
-            motorExecute.setMotorVoltagePOS(voltsPerLoop);
         })
-        .until(() -> {
-            double motorPosition = motorExecute.getMotorPosition(gearRatio).magnitude();
-            return motorPosition >= setUpPosition;
-        })
-        .finallyDo(() -> {
-            motorExecute.stopMotor();
-        });
-    }
-
-    public Command getKGCommand(double setUpVolts, double setUpPosition, double voltsPerLoop, double gearRatio){
-        return Commands.run(() -> {
-            //Apply the same voltage that was used to set up
+        .beforeStarting(() -> {
+            currentVolts = voltsPerLoop;
+            stepTimer.restart();
         });
     }
 
