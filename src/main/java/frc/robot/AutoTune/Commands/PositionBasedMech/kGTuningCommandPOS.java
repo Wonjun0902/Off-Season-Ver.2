@@ -1,4 +1,4 @@
-package frc.robot.AutoTune.Commands;
+package frc.robot.AutoTune.Commands.PositionBasedMech;
 
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;

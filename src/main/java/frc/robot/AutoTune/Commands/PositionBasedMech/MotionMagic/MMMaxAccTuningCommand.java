@@ -1,4 +1,4 @@
-package frc.robot.AutoTune.Commands.MotionMagic;
+package frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagic;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.AutoTune.MotorExecute;
