@@ -1,7 +1,6 @@
 package frc.robot.AutoTune.Commands.StandardPID;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.AutoTune.MotorExecute;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
