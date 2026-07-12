@@ -41,12 +41,11 @@ public class kSTuningCommandTQ {
             return currentSpeed > 0.05;
         })
         .finallyDo((interrupted) -> {
-            motorExecute.stopMotor();
-
             if(!interrupted){
                 tunedkS = currentAmps;
                 SmartDashboard.putNumber("kS Value TQFOC: ", currentAmps);
             }
+            motorExecute.stopMotor();
         });
     }
 

@@ -40,8 +40,6 @@ public class kVTuningCommandTQ {
 
             return currentSpeed.gte(threshold);
         }).finallyDo((interrupted) -> {
-            motorExecute.stopMotor();
-
             if(!interrupted){
                 double kSTQ = kSTuningCommandTQ.getKSTQ();
                 double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RotationsPerSecond);
@@ -49,6 +47,7 @@ public class kVTuningCommandTQ {
 
                 SmartDashboard.putNumber("kS Value TQFOC: ", tunedkVTQ);
             }
+            motorExecute.stopMotor();
         });
     }
 
