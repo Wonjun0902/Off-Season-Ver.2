@@ -84,7 +84,7 @@ public class MMMaxAccTuningCommand {
     }
 
     public double getMaxAcc(){
-        return SmartDashboard.getNumber("Max Acceleration Value: ", tunedMaxAcc);
+        return tunedMaxAcc;
     }
 
 }

@@ -91,7 +91,7 @@ public class kDTuningCommand{
 }
 
 public double getkD(){
-    return SmartDashboard.getNumber("kD Value: ", bestkD);
+    return bestkD;
 }
 }
 

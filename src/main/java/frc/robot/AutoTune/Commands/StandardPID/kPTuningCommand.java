@@ -118,6 +118,6 @@ public class kPTuningCommand{
         });}
 
     public double getkP(){
-        return SmartDashboard.getNumber("kP Value: ", bestkP);
+        return bestkP;
     }
 }

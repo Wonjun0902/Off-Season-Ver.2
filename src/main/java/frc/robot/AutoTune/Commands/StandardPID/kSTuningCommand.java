@@ -53,6 +53,6 @@ public class kSTuningCommand{
     }
 
     public double getKS(){
-        return SmartDashboard.getNumber("kS Value: ", tunedkS);
+        return tunedkS;
     }
 }

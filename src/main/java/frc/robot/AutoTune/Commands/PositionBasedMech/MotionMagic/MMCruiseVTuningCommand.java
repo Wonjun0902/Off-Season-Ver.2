@@ -57,6 +57,6 @@ public class MMCruiseVTuningCommand {
     }
 
     public double getCruiseVelocity(){
-        return SmartDashboard.getNumber("Cruise Velocity Value: ", tunedCruiseV);
+        return tunedCruiseV;
     }
 }

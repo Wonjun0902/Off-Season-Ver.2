@@ -58,7 +58,7 @@ public class kVTuningCommand{
     }
 
     public double getKV(){
-        return SmartDashboard.getNumber("kV Value: ", tunedkV);
+        return tunedkV;
     }
 
 }

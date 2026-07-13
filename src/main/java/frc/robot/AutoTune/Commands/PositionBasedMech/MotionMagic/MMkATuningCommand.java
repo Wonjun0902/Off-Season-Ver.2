@@ -90,6 +90,6 @@ public class MMkATuningCommand {
     }
 
     public double getKA(){
-        return SmartDashboard.getNumber("kA Value: ",tunedkA);
+        return tunedkA;
     }
 }
