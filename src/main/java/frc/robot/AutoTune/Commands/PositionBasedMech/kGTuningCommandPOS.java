@@ -20,6 +20,7 @@ public class kGTuningCommandPOS{
     private double risingSign;
     private boolean isOvershoot;
     private Timer riseTimer = new Timer();
+    private Timer rampTimer = new Timer();
     /**
      * A kG Tuning Command for an elevator subsystem 
      * It will be a loop where the code finds the best kG that makes the mechansim hover without falling down. 
@@ -47,20 +48,21 @@ public class kGTuningCommandPOS{
         });
     }
 
-    public Command stayCommand(double voltsPerLoop, double gearRatio, double riseDuration, double minimumVolts, MotorExecute motorExecute){
+    public Command stayCommand(double voltsPerSec, double gearRatio, double riseDuration, double minimumVolts, MotorExecute motorExecute){
         return Commands.run(() -> {
             //Add increments to current voltage
-            currentVolts += voltsPerLoop;
+            currentVolts = minimumVolts + (voltsPerSec*rampTimer.get());
 
             //Apply only incrementing voltage to the motor 
             motorExecute.setMotorVoltagePOS(currentVolts);
 
             //Get the descending speed 
             AngularVelocity motorSpeedinRotPerSec = motorExecute.getMotorSpeed(gearRatio);
+            double motorSpeedMagnitude = motorExecute.getMotorSpeed(gearRatio).magnitude();
             double motorSpeed = motorSpeedinRotPerSec.in(RotationsPerSecond);
             double sign = Math.signum(motorSpeed);
 
-            if(risingSign == sign){
+            if(risingSign == sign || motorSpeedMagnitude < 0.03){
                 isOvershoot = true;
             }
             else{
@@ -69,21 +71,17 @@ public class kGTuningCommandPOS{
         })
         .beforeStarting(() -> {
             currentVolts = minimumVolts;
+            rampTimer.restart();
+            isOvershoot = false;
         })
         .until(() -> {
             return isOvershoot;
         })
         .finallyDo((interrupted) -> {
-
             if(!interrupted){
-                double speedMagnitude = motorExecute.getMotorSpeed(gearRatio).magnitude();
-            if(!isOvershoot && speedMagnitude < 0.03){
                 tunedkG = currentVolts;
+                SmartDashboard.putNumber("kG Value: ", tunedkG);
             }
-
-            SmartDashboard.putNumber("kG Value: ", tunedkG);
-            }
-
             motorExecute.stopMotor();
         });
     }
