@@ -43,10 +43,11 @@ public class kGTuningCommandPOS{
         })
         .beforeStarting(() -> {
             currentVolts = voltsPerLoop;
+            riseTimer.restart();
         });
     }
 
-    public Command stayCommand(double voltsPerLoop, double gearRatio, double riseDuration, MotorExecute motorExecute){
+    public Command stayCommand(double voltsPerLoop, double gearRatio, double riseDuration, double minimumVolts, MotorExecute motorExecute){
         return Commands.run(() -> {
             //Add increments to current voltage
             currentVolts += voltsPerLoop;
@@ -65,21 +66,22 @@ public class kGTuningCommandPOS{
             else{
                 isOvershoot = false;
             }
-
-            double speedMagnitude = motorExecute.getMotorSpeed(gearRatio).magnitude();
-            if(!isOvershoot && speedMagnitude < 0.03){
-                currentVolts = tunedkG;
-            }
         })
         .beforeStarting(() -> {
-            currentVolts = 0.0;
+            currentVolts = minimumVolts;
         })
         .until(() -> {
             return isOvershoot;
         })
         .finallyDo((interrupted) -> {
+
             if(!interrupted){
-                SmartDashboard.putNumber("kG Value: ", tunedkG);
+                double speedMagnitude = motorExecute.getMotorSpeed(gearRatio).magnitude();
+            if(!isOvershoot && speedMagnitude < 0.03){
+                tunedkG = currentVolts;
+            }
+
+            SmartDashboard.putNumber("kG Value: ", tunedkG);
             }
 
             motorExecute.stopMotor();
@@ -87,6 +89,6 @@ public class kGTuningCommandPOS{
     }
 
     public double getKG(){
-        return SmartDashboard.getNumber("kG Value: ", tunedkG);
+        return tunedkG;
     }
 }
