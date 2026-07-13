@@ -29,7 +29,7 @@ public class kGTuningCommandPOS{
      * @param setUpVolts to move the elevator up to a certain position 
      * @param voltsPerLoop for increments for the voltage to make the elevator stands still. 
      */
-    public Command riseCommand(double setUpVolts, double voltsPerLoop, double gearRatio, double riseDuration, MotorExecute motorExecute){
+    public Command riseCommand(double setUpVolts, double voltsPerLoop, double gearRatio, MotorExecute motorExecute){
         return Commands.run(() -> {
             //Apply both setUpVoltage and currentVolts(incrementing volts)
             motorExecute.setMotorVoltagePOS(currentVolts + setUpVolts);
@@ -40,7 +40,7 @@ public class kGTuningCommandPOS{
             risingSign = Math.signum(risingSpeed);
         })
         .until(() -> {
-            return riseTimer.hasElapsed(riseDuration);
+            return riseTimer.hasElapsed(0.5);
         })
         .beforeStarting(() -> {
             currentVolts = voltsPerLoop;
@@ -48,7 +48,7 @@ public class kGTuningCommandPOS{
         });
     }
 
-    public Command stayCommand(double voltsPerSec, double gearRatio, double riseDuration, double minimumVolts, MotorExecute motorExecute){
+    public Command stayCommand(double voltsPerSec, double gearRatio, double minimumVolts, MotorExecute motorExecute){
         return Commands.run(() -> {
             //Add increments to current voltage
             currentVolts = minimumVolts + (voltsPerSec*rampTimer.get());
@@ -58,15 +58,17 @@ public class kGTuningCommandPOS{
 
             //Get the descending speed 
             AngularVelocity motorSpeedinRotPerSec = motorExecute.getMotorSpeed(gearRatio);
-            double motorSpeedMagnitude = motorExecute.getMotorSpeed(gearRatio).magnitude();
             double motorSpeed = motorSpeedinRotPerSec.in(RotationsPerSecond);
+            double motorSpeedMagnitude = Math.abs(motorSpeed);
             double sign = Math.signum(motorSpeed);
 
-            if(risingSign == sign || motorSpeedMagnitude < 0.03){
+            if(rampTimer.hasElapsed(0.5)){
+                 if(risingSign == sign || motorSpeedMagnitude < 0.03){
                 isOvershoot = true;
-            }
-            else{
+                }
+                else{
                 isOvershoot = false;
+                }
             }
         })
         .beforeStarting(() -> {
