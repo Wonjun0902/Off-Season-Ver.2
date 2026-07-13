@@ -3,6 +3,7 @@ package frc.robot.AutoTune.Commands.PositionBasedMech;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -16,7 +17,9 @@ public class kGTuningCommandPOS{
 
     private double currentVolts;
     public double tunedkG = 0.0;
-    private Timer stepTimer = new Timer();
+    private double risingSign;
+    private boolean isOvershoot;
+    private Timer riseTimer = new Timer();
     /**
      * A kG Tuning Command for an elevator subsystem 
      * It will be a loop where the code finds the best kG that makes the mechansim hover without falling down. 
@@ -25,24 +28,61 @@ public class kGTuningCommandPOS{
      * @param setUpVolts to move the elevator up to a certain position 
      * @param voltsPerLoop for increments for the voltage to make the elevator stands still. 
      */
-    public Command elevatorKGTuningCommand(double setUpVolts, double voltsPerLoop, double gearRatio, double duration, MotorExecute motorExecute){
-        return Commands.run(() ->{ 
-            //1. Start Adding Increment volts to a certain position -> depends on the mechanism 
+    public Command riseCommand(double setUpVolts, double voltsPerLoop, double gearRatio, double riseDuration, MotorExecute motorExecute){
+        return Commands.run(() -> {
+            //Apply both setUpVoltage and currentVolts(incrementing volts)
             motorExecute.setMotorVoltagePOS(currentVolts + setUpVolts);
 
-            //Check status of the motor 
-            double currentPos = motorExecute.getMotorPosition(gearRatio).magnitude();
-            double currentSpeed = 
-
-            //Check status after timer is over
-            if(stepTimer.hasElapsed(duration)){
-
-            }
-
+            //Check direction of the motor 
+            AngularVelocity risingSpeedinRotPerSec = motorExecute.getMotorSpeed(gearRatio);
+            double risingSpeed = risingSpeedinRotPerSec.in(RotationsPerSecond);
+            risingSign = Math.signum(risingSpeed);
+        })
+        .until(() -> {
+            return riseTimer.hasElapsed(riseDuration);
         })
         .beforeStarting(() -> {
             currentVolts = voltsPerLoop;
-            stepTimer.restart();
+        });
+    }
+
+    public Command stayCommand(double voltsPerLoop, double gearRatio, double riseDuration, MotorExecute motorExecute){
+        return Commands.run(() -> {
+            //Add increments to current voltage
+            currentVolts += voltsPerLoop;
+
+            //Apply only incrementing voltage to the motor 
+            motorExecute.setMotorVoltagePOS(currentVolts);
+
+            //Get the descending speed 
+            AngularVelocity motorSpeedinRotPerSec = motorExecute.getMotorSpeed(gearRatio);
+            double motorSpeed = motorSpeedinRotPerSec.in(RotationsPerSecond);
+            double sign = Math.signum(motorSpeed);
+
+            if(risingSign == sign){
+                isOvershoot = true;
+            }
+            else{
+                isOvershoot = false;
+            }
+
+            double speedMagnitude = motorExecute.getMotorSpeed(gearRatio).magnitude();
+            if(!isOvershoot && speedMagnitude < 0.03){
+                currentVolts = tunedkG;
+            }
+        })
+        .beforeStarting(() -> {
+            currentVolts = 0.0;
+        })
+        .until(() -> {
+            return isOvershoot;
+        })
+        .finallyDo((interrupted) -> {
+            if(!interrupted){
+                SmartDashboard.putNumber("kG Value: ", tunedkG);
+            }
+
+            motorExecute.stopMotor();
         });
     }
 
