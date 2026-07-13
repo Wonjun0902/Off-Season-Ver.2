@@ -27,9 +27,9 @@ public class kGTuningCommandPOS{
      * For the elevator class, we don't really need to have a specific position that we need to initially set it up to
      * but for Arm mechs, we need to place the mechanism to be a place where there is maximum gravitational force - horizontal position
      * @param setUpVolts to move the elevator up to a certain position 
-     * @param voltsPerLoop for increments for the voltage to make the elevator stands still. 
+     * @param voltsPerSec for increments for the voltage to make the elevator stands still. 
      */
-    public Command riseCommand(double setUpVolts, double voltsPerLoop, double gearRatio, MotorExecute motorExecute){
+    public Command riseCommand(double setUpVolts, double voltsPerSec, double riseDuration, double gearRatio, MotorExecute motorExecute){
         return Commands.run(() -> {
             //Apply both setUpVoltage and currentVolts(incrementing volts)
             motorExecute.setMotorVoltagePOS(currentVolts + setUpVolts);
@@ -40,10 +40,10 @@ public class kGTuningCommandPOS{
             risingSign = Math.signum(risingSpeed);
         })
         .until(() -> {
-            return riseTimer.hasElapsed(0.5);
+            return riseTimer.hasElapsed(riseDuration);
         })
         .beforeStarting(() -> {
-            currentVolts = voltsPerLoop;
+            currentVolts = voltsPerSec;
             riseTimer.restart();
         });
     }
