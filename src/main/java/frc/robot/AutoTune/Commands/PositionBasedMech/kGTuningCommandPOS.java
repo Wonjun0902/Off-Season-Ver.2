@@ -1,6 +1,5 @@
 package frc.robot.AutoTune.Commands.PositionBasedMech;
 
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -13,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 //It is very important that you put the right direction of the motor -> positive or negative direction
 //If you don't consider that, the motor will likely stop due to the safety check of the setMotorVoltagePOS method
+
+//kG Tuning Command requires 2 commands - setUp commannd and stayCommand for getting the kG
 public class kGTuningCommandPOS{
 
     private double currentVolts;
