@@ -2,6 +2,7 @@ package frc.robot.AutoTune;
 
 import frc.robot.AutoTune.HardWare.TunableMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -10,6 +11,8 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 
 import static edu.wpi.first.units.Units.*;
+
+import com.ctre.phoenix6.signals.GravityTypeValue;
 
 public class MotorExecute {
 
@@ -134,5 +137,14 @@ public class MotorExecute {
     //the same 
     public void stopMotor(){
         m_motor.stopMotor();
+    }
+
+    public void configureMotionMagic(double kS, double kV, double kA, double kG, double kP, double cruiseV, double maxAcc, GravityTypeValue gravityTypeValue){
+        m_motor.configureMotionMagic(kS,kV, kA, kG, kP, cruiseV, maxAcc, gravityTypeValue);
+    }
+
+    public Angle getReferencePosition(double gearRatio){
+        Angle currentRef = m_motor.getReferencePosition();
+        return currentRef.div(gearRatio);
     }
 }

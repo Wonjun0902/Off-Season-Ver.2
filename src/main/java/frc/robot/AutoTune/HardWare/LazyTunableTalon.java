@@ -12,6 +12,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
@@ -22,7 +23,15 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import static edu.wpi.first.units.Units.Volts;
+
+import javax.sql.RowSetInternal;
+
 import static edu.wpi.first.units.Units.Amps;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 
 public class LazyTunableTalon implements TunableMotor{
@@ -101,5 +110,37 @@ public class LazyTunableTalon implements TunableMotor{
     @Override
     public Voltage getVoltage(){
         return this.motor.getMotorVoltage().getValue();
+    }
+    
+    @Override 
+    public void configureMotionMagic(double kS, double kV, double kA, double kG, double kP, double cruiseV, double maxAcc, GravityTypeValue gravityTypeValue){
+        TalonFXConfiguration config = new TalonFXConfiguration();
+
+        config.Slot0.kP = kP;
+        config.Slot0.kS = kS;
+        config.Slot0.kV = kV;
+        config.Slot0.kA = kA;
+        config.Slot0.kG = kG;
+        config.Slot0.GravityType = gravityTypeValue;
+
+        config.MotionMagic.MotionMagicAcceleration = maxAcc;
+        config.MotionMagic.MotionMagicCruiseVelocity = cruiseV;
+
+        this.motor.getConfigurator().apply(config);
+    }
+
+    @Override 
+    public Angle getReferencePosition(){
+        return Rotations.of(this.motor.getClosedLoopReference().getValueAsDouble());
+    }
+
+    @Override 
+    public AngularVelocity getReferenceVelocity(){
+        return RotationsPerSecond.of(this.motor.getClosedLoopReference().getValueAsDouble());
+    }
+
+    @Override 
+    public AngularAcceleration getReferenceAcceleration(){
+        return RotationsPerSecondPerSecond.of(this.motor.getClosedLoopReference().getValueAsDouble());
     }
 }
