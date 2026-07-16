@@ -54,7 +54,7 @@ public class kPTuningCommand{
             //4. Check if the motor speed reaches the targetSpeed
             double absCurrentSpeed = Math.abs(currentSpeed);
             double absTargetSpeed = Math.abs(targetSpeed);
-            if(absCurrentSpeed > absTargetSpeed){
+            if(absCurrentSpeed >= absTargetSpeed){
                 isreachedTarget = true;
             }
             
