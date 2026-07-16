@@ -23,4 +23,8 @@ public interface TunableMotor {
     public Current getCurrent();
 
     public Voltage getVoltage();
+
+    public void setMMExpoTarget(Angle setPoint);
+
+    public void setMMPositionTarget(Angle setPoint);
 }

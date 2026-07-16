@@ -93,6 +93,16 @@ public class LazyTunableFXS implements TunableMotor{
     public AngularAcceleration getAcceleration(){
         return this.motor.getAcceleration().getValue();
     }
+
+    @Override 
+    public void setMMPositionTarget(Angle setPoint){
+        this.motor.setControl(mmPosVoltage.withPosition(setPoint));
+    }
+
+    @Override
+    public void setMMExpoTarget(Angle setPoint){
+        this.motor.setControl(mmPosExpVoltage.withPosition(setPoint));
+    }
 }
 
 

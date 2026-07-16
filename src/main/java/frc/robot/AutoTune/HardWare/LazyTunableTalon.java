@@ -68,6 +68,16 @@ public class LazyTunableTalon implements TunableMotor{
         this.motor.setControl(torqueCurrentFOC.withOutput(current));
     }
 
+    @Override 
+    public void setMMPositionTarget(Angle setPoint){
+        this.motor.setControl(mmPosVoltage.withPosition(setPoint));
+    }
+
+    @Override
+    public void setMMExpoTarget(Angle setPoint){
+        this.motor.setControl(mmPosExpVoltage.withPosition(setPoint));
+    }
+
     @Override
     public void stopMotor(){
         this.motor.stopMotor();
