@@ -77,10 +77,10 @@ public class TunableMotorSim implements TunableMotor{
     }
 
     @Override 
-    public void setMMExpoTarget(Angle setPoint){
+    public void setMMExpoTarget(Angle setPoint, int slot){
     }
 
     @Override 
-    public void setMMPositionTarget(Angle setPoint){}
+    public void setMMPositionTarget(Angle setPoint, int slot){}
 
 }
