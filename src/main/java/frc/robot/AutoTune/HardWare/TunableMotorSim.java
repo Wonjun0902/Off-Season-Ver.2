@@ -13,6 +13,7 @@ import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Amps;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 
 public class TunableMotorSim implements TunableMotor{
     private DCMotor gearbox;
@@ -83,4 +84,11 @@ public class TunableMotorSim implements TunableMotor{
     @Override 
     public void setMMPositionTarget(Angle setPoint, int slot){}
 
+    @Override 
+    public void configureMotionMagic(double kS, double kV, double kA, double kG, double kP, double cruiseV, double maxAcc, GravityTypeValue gravityTypeValue){}
+
+    @Override
+    public Angle getReferencePosition(){
+        return null;
+    }
 }

@@ -133,14 +133,4 @@ public class LazyTunableTalon implements TunableMotor{
     public Angle getReferencePosition(){
         return Rotations.of(this.motor.getClosedLoopReference().getValueAsDouble());
     }
-
-    @Override 
-    public AngularVelocity getReferenceVelocity(){
-        return RotationsPerSecond.of(this.motor.getClosedLoopReference().getValueAsDouble());
-    }
-
-    @Override 
-    public AngularAcceleration getReferenceAcceleration(){
-        return RotationsPerSecondPerSecond.of(this.motor.getClosedLoopReference().getValueAsDouble());
-    }
 }
