@@ -33,4 +33,6 @@ public interface TunableMotor {
     public void configureMotionMagic(double kS, double kV, double kA, double kG, double kP, double cruiseV, double maxAcc, GravityTypeValue gravityTypeValue);
 
     public Angle getReferencePosition();
+
+    public AngularVelocity getReferenceSpeed();
 }

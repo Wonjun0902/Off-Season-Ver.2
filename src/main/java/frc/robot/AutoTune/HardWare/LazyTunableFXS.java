@@ -132,6 +132,11 @@ public class LazyTunableFXS implements TunableMotor{
     public Angle getReferencePosition(){
         return Rotations.of(this.motor.getClosedLoopReference().getValueAsDouble());
     }
+
+    @Override 
+    public AngularVelocity getReferenceSpeed(){
+        return RotationsPerSecond.of(this.motor.getClosedLoopReferenceSlope().getValueAsDouble());
+    }
 }
 
 

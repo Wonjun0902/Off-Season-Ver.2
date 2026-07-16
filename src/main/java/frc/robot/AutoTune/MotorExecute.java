@@ -147,4 +147,17 @@ public class MotorExecute {
         Angle currentRef = m_motor.getReferencePosition();
         return currentRef.div(gearRatio);
     }
+
+    public AngularVelocity gerReferenceSpeed(double gearRatio){
+        AngularVelocity currentRef = m_motor.getReferenceSpeed();
+        return currentRef;
+    }
+
+    public void setMMPositionTarget(Angle target){
+        m_motor.setMMPositionTarget(target, 0);
+    }
+
+    public void setMMExpoTarget(Angle target){
+        m_motor.setMMExpoTarget(target, 0);
+    }
 }

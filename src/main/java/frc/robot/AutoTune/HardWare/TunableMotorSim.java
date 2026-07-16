@@ -91,4 +91,9 @@ public class TunableMotorSim implements TunableMotor{
     public Angle getReferencePosition(){
         return null;
     }
+
+    @Override 
+    public AngularVelocity getReferenceSpeed(){
+        return null;
+    }
 }
