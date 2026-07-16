@@ -76,4 +76,11 @@ public class TunableMotorSim implements TunableMotor{
         return Volts.of(simMotor.getInputVoltage());
     }
 
+    @Override 
+    public void setMMExpoTarget(Angle setPoint){
+    }
+
+    @Override 
+    public void setMMPositionTarget(Angle setPoint){}
+
 }
