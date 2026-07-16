@@ -148,7 +148,7 @@ public class MotorExecute {
         return currentRef.div(gearRatio);
     }
 
-    public AngularVelocity gerReferenceSpeed(double gearRatio){
+    public AngularVelocity getReferenceSpeed(double gearRatio){
         AngularVelocity currentRef = m_motor.getReferenceSpeed();
         return currentRef;
     }
