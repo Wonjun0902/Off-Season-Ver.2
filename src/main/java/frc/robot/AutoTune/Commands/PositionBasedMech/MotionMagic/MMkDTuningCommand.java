@@ -50,11 +50,12 @@ public class MMkDTuningCommand {
                     motorExecute.configureMotionMagic(tunedkS, tunedkV, tunedkA, tunedkG, tunedkP, testkD, tunedCruiseV, tunedMaxAcc, gravityType);
                     motorExecute.setMMPositionTarget(Rotations.of(highTarget));
                     currentState = State.MOVING_HIGH;
+                    timeOutTimer.restart();
                     break;
 
                 case MOVING_HIGH:
                     cumulateError(motorExecute, gearRatio);
-                    if(isReachedTarget(motorExecute, gearRatio, highTarget)){
+                    if(isReachedTarget(motorExecute, gearRatio, highTarget) || timeOutTimer.hasElapsed(3.0)){
                         currentState = State.INIT_LOW;
                     }
                     break;
@@ -62,11 +63,12 @@ public class MMkDTuningCommand {
                 case INIT_LOW:
                     motorExecute.setMMPositionTarget(Rotations.of(lowTarget));
                     currentState = State.MOVING_LOW;
+                    timeOutTimer.restart();
                     break;
 
                 case MOVING_LOW:
                     cumulateError(motorExecute, gearRatio);
-                    if(isReachedTarget(motorExecute, gearRatio, lowTarget)){
+                    if(isReachedTarget(motorExecute, gearRatio, lowTarget) || timeOutTimer.hasElapsed(3.0)){
                         currentState = State.EVALUATING;
                     }
                     break;
