@@ -14,13 +14,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-
-import java.lang.reflect.GenericArrayType;
-
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-
-import com.ctre.phoenix6.signals.GravityTypeValue;
-
 //Class for caculating the kP Value for MM
 
 //It is very important that you put the right direction of the motor -> positive or negative direction
