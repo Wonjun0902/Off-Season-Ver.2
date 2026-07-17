@@ -139,8 +139,8 @@ public class MotorExecute {
         m_motor.stopMotor();
     }
 
-    public void configureMotionMagic(double kS, double kV, double kA, double kG, double kP, double cruiseV, double maxAcc, GravityTypeValue gravityTypeValue){
-        m_motor.configureMotionMagic(kS,kV, kA, kG, kP, cruiseV, maxAcc, gravityTypeValue);
+    public void configureMotionMagic(double kS, double kV, double kA, double kG, double kP, double kD, double cruiseV, double maxAcc, GravityTypeValue gravityTypeValue){
+        m_motor.configureMotionMagic(kS,kV, kA, kG, kP, kD, cruiseV, maxAcc, gravityTypeValue);
     }
 
     public Angle getReferencePosition(double gearRatio){
