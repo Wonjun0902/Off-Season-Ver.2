@@ -30,7 +30,7 @@ public interface TunableMotor {
 
     public void setMMPositionTarget(Angle setPoint, int slot);
 
-    public void configureMotionMagic(double kS, double kV, double kA, double kG, double kP, double cruiseV, double maxAcc, GravityTypeValue gravityTypeValue);
+    public void configureMotionMagic(double kS, double kV, double kA, double kG, double kP, double kD, double cruiseV, double maxAcc, GravityTypeValue gravityTypeValue);
 
     public Angle getReferencePosition();
 

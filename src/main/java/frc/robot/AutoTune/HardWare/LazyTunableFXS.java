@@ -112,10 +112,12 @@ public class LazyTunableFXS implements TunableMotor{
     }
 
     @Override 
-    public void configureMotionMagic(double kS, double kV, double kA, double kG, double kP, double cruiseV, double maxAcc, GravityTypeValue gravityTypeValue){
+    public void configureMotionMagic(double kS, double kV, double kA, double kG, double kP, double kD, double cruiseV, double maxAcc, GravityTypeValue gravityTypeValue){
         TalonFXSConfiguration config = new TalonFXSConfiguration();
 
         config.Slot0.kP = kP;
+        config.Slot0.kD = kD;
+        config.Slot0.kI = 0.0;
         config.Slot0.kS = kS;
         config.Slot0.kV = kV;
         config.Slot0.kA = kA;
