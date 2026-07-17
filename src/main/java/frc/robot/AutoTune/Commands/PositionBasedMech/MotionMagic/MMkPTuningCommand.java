@@ -8,13 +8,18 @@ import frc.robot.AutoTune.Commands.StandardPID.kVTuningCommand;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.lang.reflect.GenericArrayType;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+
+import com.ctre.phoenix6.signals.GravityTypeValue;
 
 //Class for caculating the kP Value for MM
 
@@ -28,189 +33,116 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 //The only thing we need to do is input the cruise velocity and max acceleration so that the built in code can follow   
 public class MMkPTuningCommand {
 
+    //Define States 
+    private enum State{
+        INIT_HIGH, MOVING_HIGH, INIT_LOW, MOVING_LOW, EVALUATING
+    }
+
+    //Class Variables to be changed inside the loop
+    private State currentState = State.INIT_HIGH;
     private double testkP = 0.0;
     private double bestkP = 0.0;
+    private double lowestScorePOS = Double.MAX_VALUE;
+    private double lowestScoreVEL = Double.MAX_VALUE;
+    private double cumulativeErrorPOS = 0.0;
+    private double cumulativeErrorVEL = 0.0;
+    private double tunedkS, tunedkV, tunedkA, tunedkG, tunedCruiseV, tunedMaxAcc;
 
-    private double lowestScore = 0.0;
+    private Timer timeOutTimer = new Timer();
 
-    private double cumulativeErrorPos = 0.0;
-    private double cumulativeErrorPosLOW = 0.0;
-
-    private double cumulativeErrorSpeed = 0.0;
-    private double cumulativeErrorSpeedLOW = 0.0;
-
-    private boolean isreachedTarget = false;
-    private boolean isreachedTargetLOW = false;
-
-    private double score1 = 0.0;
-    private double score2 = 0.0;
-
-    private TalonFXConfiguration config = new TalonFXConfiguration();
-
-    /**
-     * Going to a high position -> will go down in the next command 
-     * This Command will map out the trajectory using the motion magic voltage object 
-     * Test with a few kP values and return the best kP gain by scoring (score by errors)
-     * @param kPIncrement
-     * @param high target 
-     * @param duration 
-     * @param maxkP
-     */
-    public Command highTargetCommand(double kPIncrement, double highTarget, double maxkP, double gearRatio, GravityTypeValue gravityTypeValue, MotorExecute motorExecute, MMCruiseVTuningCommand mmCruiseVTuningCommand, MMMaxAccTuningCommand mmMaxAccTuningCommand, MMkATuningCommand mMkATuningCommand, kSTuningCommand kSTuningCommand, kVTuningCommand kVTuningCommand, kGTuningCommandPOS kGTuningCommandPOS){
-        return Commands.runOnce(() -> {
+    public Command mmkPTuningCommand(double kPIncrement, double lowTarget, double highTarget, double maxkP, double gearRatio,
+        GravityTypeValue gravityType, MotorExecute motorExecute,
+        MMCruiseVTuningCommand mmCruiseVTuningCommand,
+        MMMaxAccTuningCommand mmMaxAccTuningCommand,
+        MMkATuningCommand mMkATuningCommand,
+        kSTuningCommand kSTuningCommand,
+        kVTuningCommand kVTuningCommand,
+        kGTuningCommandPOS kGTuningCommandPOS){
         
-            double tunedkS = kSTuningCommand.getKS();
-            double tunedkV = kVTuningCommand.getKV();
-            double tunedkA = mMkATuningCommand.getKA();
-            double tunedMaxAcc = mmMaxAccTuningCommand.getMaxAcc();
-            double tunedCruiseV = mmCruiseVTuningCommand.getCruiseVelocity();
-            double tunedkG = kGTuningCommandPOS.getKG();
-
-            config.Slot0.kS = tunedkS;
-            config.Slot0.kV = tunedkV;
-            config.Slot0.kA = tunedkA;
-            config.Slot0.kG = tunedkG;
-            config.Slot0.GravityType = gravityTypeValue;
-
-            config.Slot0.kP = testkP;
-            config.Slot0.kI = 0.0;
-            config.Slot0.kD = 0.0;
-
-            config.MotionMagic.MotionMagicAcceleration = tunedMaxAcc;
-            config.MotionMagic.MotionMagicCruiseVelocity = tunedCruiseV;
-
-            motorExecute.configureMotionMagic(tunedkS, tunedkV, tunedkA, tunedkG, maxkP, tunedCruiseV, tunedMaxAcc, gravityTypeValue);
-
-            motorExecute.setMMPositionTarget(Rotations.of(highTarget));
-
-            //2. Calculate error - Position and Speed
-            double currentPos = motorExecute.getMotorPosition(gearRatio).in(Rotations);
-            double referencePos = motorExecute.getReferencePosition(gearRatio).in(Rotations);
-            double errorPos = Math.abs(referencePos- currentPos);
-
-            double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RotationsPerSecond);
-            double referenceSpeed = motorExecute.getReferenceSpeed(gearRatio).in(RotationsPerSecond);
-            double errorSpeed = Math.abs(referenceSpeed - currentSpeed);
-
-            cumulativeErrorPos += errorPos;
-            cumulativeErrorSpeed += errorSpeed;
-
-            //3. UnderShooting Check -> if the motor didn't even reach the reference target, we won't consider it 
-            double absCurrentPos = Math.abs(currentPos);
-            double absTargetPos = Math.abs(referencePos);
-            if(absCurrentPos >= absTargetPos){
-                isreachedTarget = true;
-            }
-
-            //4. Scoring 
-            if(errorPos < 0.05 && errorSpeed < 0.01){
-                double finalWeight = 5;
-
-                if(!isreachedTarget){
-                    finalWeight = Double.MAX_VALUE;
-                }
-
-                score1 = (cumulativeErrorPos + cumulativeErrorSpeed)*finalWeight;
-            }
-        })
-        .beforeStarting(() -> {
-            testkP = kPIncrement;
-            cumulativeErrorPos = 0.0;
-            cumulativeErrorSpeed = 0.0;
-        });
-    }
-
-    /**
-     * Going down to the low position 
-     * @param -> all the param is the same for go high command except for lowTarget
-     */
-    public Command lowTargetCommand(double kPIncrement, double lowTarget, double maxkP, double gearRatio, GravityTypeValue gravityTypeValue, MotorExecute motorExecute, MMCruiseVTuningCommand mmCruiseVTuningCommand, MMMaxAccTuningCommand mmMaxAccTuningCommand, MMkATuningCommand mMkATuningCommand, kSTuningCommand kSTuningCommand, kVTuningCommand kVTuningCommand, kGTuningCommandPOS kGTuningCommandPOS){
-        return Commands.runOnce(() -> {
-            //Configure the motor with the gains
-            double tunedkS = kSTuningCommand.getKS();
-            double tunedkV = kVTuningCommand.getKV();
-            double tunedkA = mMkATuningCommand.getKA();
-            double tunedMaxAcc = mmMaxAccTuningCommand.getMaxAcc();
-            double tunedCruiseV = mmCruiseVTuningCommand.getCruiseVelocity();
-            double tunedkG = kGTuningCommandPOS.getKG();
-
-            config.Slot0.kS = tunedkS;
-            config.Slot0.kV = tunedkV;
-            config.Slot0.kA = tunedkA;
-            config.Slot0.kG = tunedkG;
-            config.Slot0.GravityType = gravityTypeValue;
-
-            config.Slot0.kP = testkP;
-            config.Slot0.kI = 0.0;
-            config.Slot0.kD = 0.0;
-
-            config.MotionMagic.MotionMagicAcceleration = tunedMaxAcc;
-            config.MotionMagic.MotionMagicCruiseVelocity = tunedCruiseV;
-
-            motorExecute.configureMotionMagic(tunedkS, tunedkV, tunedkA, tunedkG, maxkP, tunedCruiseV, tunedMaxAcc, gravityTypeValue);
-
-            motorExecute.setMMPositionTarget(Rotations.of(lowTarget));
-
-            //2. Calculate error - Position and Speed
-            double currentPos = motorExecute.getMotorPosition(gearRatio).in(Rotations);
-            double referencePos = motorExecute.getReferencePosition(gearRatio).in(Rotations);
-            double errorPos = Math.abs(referencePos- currentPos);
-
-            double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RotationsPerSecond);
-            double referenceSpeed = motorExecute.getReferenceSpeed(gearRatio).in(RotationsPerSecond);
-            double errorSpeed = Math.abs(referenceSpeed - currentSpeed);
-
-            cumulativeErrorPosLOW += errorPos;
-            cumulativeErrorSpeedLOW += errorSpeed;
-
-            //3. UnderShooting Check -> if the motor didn't even reach the reference target, we won't consider it 
-            double absCurrentPos = Math.abs(currentPos);
-            double absTargetPos = Math.abs(referencePos);
-            if(absCurrentPos >= absTargetPos){
-                isreachedTargetLOW = true;
-            }
-
-            //4. Scoring 
-            if(errorPos < 0.05 && errorSpeed < 0.01){
-                double finalWeight = 5;
-
-                if(!isreachedTargetLOW){
-                    finalWeight = Double.MAX_VALUE;
-                }
-
-                score2 = (cumulativeErrorPos + cumulativeErrorSpeed)*finalWeight;
-            }
-        })
-        .beforeStarting(() -> {
-            testkP = kPIncrement;
-            cumulativeErrorPosLOW = 0.0;
-            cumulativeErrorSpeedLOW = 0.0;
-        });
-    }
-
-    public Command mmkPTuningCommand(double kPIncrement, double lowTarget, double highTarget, double maxkP, double gearRatio, GravityTypeValue gravityTypeValue, MotorExecute motorExecute, MMCruiseVTuningCommand mmCruiseVTuningCommand, MMMaxAccTuningCommand mmMaxAccTuningCommand, MMkATuningCommand mMkATuningCommand, kSTuningCommand kSTuningCommand, kVTuningCommand kVTuningCommand, kGTuningCommandPOS kGTuningCommandPOS){
         return Commands.run(() -> {
-            highTargetCommand(kPIncrement, highTarget, maxkP, gearRatio, gravityTypeValue, motorExecute, mmCruiseVTuningCommand, mmMaxAccTuningCommand, mMkATuningCommand, kSTuningCommand, kVTuningCommand, kGTuningCommandPOS)
-            .andThen(lowTargetCommand(kPIncrement, lowTarget, maxkP, gearRatio, gravityTypeValue, motorExecute, mmCruiseVTuningCommand, mmMaxAccTuningCommand, mMkATuningCommand, kSTuningCommand, kVTuningCommand, kGTuningCommandPOS))
-            .finallyDo(() -> {
-                if(score1 < lowestScore && score2 < lowestScore){
-                    bestkP = testkP;
-                }
-                testkP += kPIncrement;
-                isreachedTarget = false;
-                isreachedTargetLOW = false;
-            });
+            switch(currentState){
+                case INIT_HIGH: 
+                    motorExecute.configureMotionMagic(tunedkS, tunedkV, tunedkA, tunedkG, testkP, tunedCruiseV, tunedMaxAcc, gravityType);
+                    motorExecute.setMMPositionTarget(Rotations.of(highTarget));
+
+                    cumulativeErrorPOS = 0.0;
+                    cumulativeErrorVEL = 0.0;
+                    timeOutTimer.restart();
+                    currentState = State.MOVING_HIGH;
+                    break;
+                
+                case MOVING_HIGH:
+                    accumulateError(motorExecute, gearRatio);
+                    if(isAtTarget(motorExecute, highTarget, gearRatio) || timeOutTimer.hasElapsed(3.0)){ //Chnage duration if needed
+                        currentState = State.INIT_LOW;
+                    }
+                    break;
+                
+                case INIT_LOW:
+                    motorExecute.setMMPositionTarget(Rotations.of(lowTarget));
+                    timeOutTimer.restart();
+                    currentState = State.MOVING_LOW;
+                    break;
+                
+                case MOVING_LOW:
+                    accumulateError(motorExecute, gearRatio);
+                    if(isAtTarget(motorExecute, lowTarget, gearRatio) || timeOutTimer.hasElapsed(3.0)){ //Change duration if needed
+                        currentState = State.EVALUATING;
+                    }
+
+                case EVALUATING:
+                    if(cumulativeErrorPOS < lowestScorePOS && cumulativeErrorVEL < lowestScoreVEL){
+                        lowestScorePOS = cumulativeErrorPOS;
+                        lowestScoreVEL = cumulativeErrorVEL;
+
+                        bestkP = testkP;
+                    }
+                    testkP += kPIncrement;
+                    currentState = State.INIT_HIGH;
+                    break;
+            }
+        })
+        .beforeStarting(() -> {
+            tunedkS = kSTuningCommand.getKS();
+            tunedkV = kVTuningCommand.getKV();
+            tunedkA = mMkATuningCommand.getKA();
+            tunedkG = kGTuningCommandPOS.getKG();
+            tunedCruiseV = mmCruiseVTuningCommand.getCruiseVelocity();
+            tunedMaxAcc = mmMaxAccTuningCommand.getMaxAcc();   
+
+            testkP = kPIncrement;
+            bestkP = 0.0;
+            lowestScorePOS = Double.MAX_VALUE;
+            lowestScoreVEL = Double.MAX_VALUE;
+            currentState = State.INIT_HIGH;
         })
         .until(() -> {
-           return testkP > maxkP;
+            return testkP > maxkP;
         })
         .finallyDo((interrupted) -> {
             motorExecute.stopMotor();
-
             if(!interrupted){
                 SmartDashboard.putNumber("MM kP Value: ", bestkP);
             }
         });
+    }
+
+    public void accumulateError(MotorExecute motorExecute, double gearRatio){
+        double referencePOS = motorExecute.getReferencePosition(gearRatio).in(Rotations);
+        double actualPOS = motorExecute.getMotorPosition(gearRatio).in(Rotations);
+
+        double referenceSpeed = motorExecute.getReferenceSpeed(gearRatio).in(RotationsPerSecond);
+        double actualSpeed = motorExecute.getMotorSpeed(gearRatio).in(RotationsPerSecond);
+        
+        cumulativeErrorPOS += Math.abs(referencePOS - actualPOS);
+        cumulativeErrorVEL += Math.abs(referenceSpeed - actualSpeed);
+    }
+
+    private boolean isAtTarget(MotorExecute motorExecute, double target, double gearRatio){
+        double currentPOS = motorExecute.getMotorPosition(gearRatio).in(Rotations);
+        double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RotationsPerSecond);
+
+        return Math.abs(target - currentPOS) < 0.05 && Math.abs(currentSpeed) < 0.05;
     }
 
     public double getMMkP(){
@@ -218,7 +150,3 @@ public class MMkPTuningCommand {
     }
 
 }
-
-//NOTE FOR MYSELF
-//Config가 하나의 커맨드에서만 활성화되는지 알아보고, 안되면 Class Varaible로 놓기 -- 이거 안됨 -> 다른 튜닝 method가 param으로 되어있어서 안되네 
-//에러 계산도 에러를 Class Variable에서 계속 쌓기 -> final loop에서 cumulative error 측정후 점수 매기기 
