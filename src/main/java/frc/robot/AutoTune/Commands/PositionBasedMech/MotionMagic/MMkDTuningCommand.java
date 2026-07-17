@@ -26,8 +26,7 @@ public class MMkDTuningCommand {
     private State currentState = State.INIT_HIGH;
     private double testkD = 0.0;
     private double bestkD = 0.0;
-    private double lowestScorePOS = Double.MAX_VALUE;
-    private double lowestScoreVEL = Double.MAX_VALUE;
+    private double lowestScore = Double.MAX_VALUE;
     private double cumulativeErrorPOS = 0.0;
     private double cumulativeErrorVEL = 0.0;
     private double tunedkS, tunedkV, tunedkA, tunedkG, tunedCruiseV, tunedMaxAcc, tunedkP;
@@ -49,6 +48,8 @@ public class MMkDTuningCommand {
                 case INIT_HIGH:
                     motorExecute.configureMotionMagic(tunedkS, tunedkV, tunedkA, tunedkG, tunedkP, testkD, tunedCruiseV, tunedMaxAcc, gravityType);
                     motorExecute.setMMPositionTarget(Rotations.of(highTarget));
+                    cumulativeErrorPOS = 0.0;
+                    cumulativeErrorVEL = 0.0;
                     currentState = State.MOVING_HIGH;
                     timeOutTimer.restart();
                     break;
@@ -74,12 +75,13 @@ public class MMkDTuningCommand {
                     break;
 
                 case EVALUATING:
-                    if(cumulativeErrorPOS < lowestScorePOS && cumulativeErrorVEL < lowestScoreVEL){
-                        lowestScorePOS = cumulativeErrorPOS;
-                        lowestScoreVEL = cumulativeErrorVEL;
-
+                    double totalScore = cumulativeErrorPOS + cumulativeErrorVEL;
+                    if(totalScore < lowestScore){
+                        lowestScore = totalScore;
                         bestkD = testkD;
                     }
+                    testkD += kDIncrement;
+                    currentState = State.INIT_HIGH;
                     break;
             }
         })
@@ -94,8 +96,7 @@ public class MMkDTuningCommand {
 
             testkD = kDIncrement;
             bestkD = 0.0;
-            lowestScorePOS = Double.MAX_VALUE;
-            lowestScoreVEL = Double.MAX_VALUE;
+            lowestScore = Double.MAX_VALUE;
             currentState = State.INIT_HIGH;
         })
         .until(() -> {

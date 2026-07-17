@@ -35,8 +35,7 @@ public class MMkPTuningCommand {
     private State currentState = State.INIT_HIGH;
     private double testkP = 0.0;
     private double bestkP = 0.0;
-    private double lowestScorePOS = Double.MAX_VALUE;
-    private double lowestScoreVEL = Double.MAX_VALUE;
+    private double lowestScore = Double.MAX_VALUE;
     private double cumulativeErrorPOS = 0.0;
     private double cumulativeErrorVEL = 0.0;
     private double tunedkS, tunedkV, tunedkA, tunedkG, tunedCruiseV, tunedMaxAcc, tunedkD;
@@ -78,6 +77,7 @@ public class MMkPTuningCommand {
 
                     cumulativeErrorPOS = 0.0;
                     cumulativeErrorVEL = 0.0;
+
                     timeOutTimer.restart();
                     currentState = State.MOVING_HIGH;
                     break;
@@ -103,9 +103,9 @@ public class MMkPTuningCommand {
                     break;
 
                 case EVALUATING:
-                    if(cumulativeErrorPOS < lowestScorePOS && cumulativeErrorVEL < lowestScoreVEL){
-                        lowestScorePOS = cumulativeErrorPOS;
-                        lowestScoreVEL = cumulativeErrorVEL;
+                    double totalScore = cumulativeErrorPOS + cumulativeErrorVEL;
+                    if(totalScore < lowestScore){
+                        lowestScore = totalScore;
 
                         bestkP = testkP;
                     }
@@ -125,8 +125,7 @@ public class MMkPTuningCommand {
 
             testkP = kPIncrement;
             bestkP = 0.0;
-            lowestScorePOS = Double.MAX_VALUE;
-            lowestScoreVEL = Double.MAX_VALUE;
+            lowestScore = Double.MAX_VALUE;
             currentState = State.INIT_HIGH;
         })
         .until(() -> {
