@@ -39,7 +39,7 @@ public class MMkPTuningCommand {
     private double lowestScoreVEL = Double.MAX_VALUE;
     private double cumulativeErrorPOS = 0.0;
     private double cumulativeErrorVEL = 0.0;
-    private double tunedkS, tunedkV, tunedkA, tunedkG, tunedCruiseV, tunedMaxAcc;
+    private double tunedkS, tunedkV, tunedkA, tunedkG, tunedCruiseV, tunedMaxAcc, tunedkD;
 
     private Timer timeOutTimer = new Timer();
 
@@ -73,7 +73,7 @@ public class MMkPTuningCommand {
         return Commands.run(() -> {
             switch(currentState){
                 case INIT_HIGH: 
-                    motorExecute.configureMotionMagic(tunedkS, tunedkV, tunedkA, tunedkG, testkP, tunedCruiseV, tunedMaxAcc, gravityType);
+                    motorExecute.configureMotionMagic(tunedkS, tunedkV, tunedkA, tunedkG, testkP, tunedkD, tunedCruiseV, tunedMaxAcc, gravityType);
                     motorExecute.setMMPositionTarget(Rotations.of(highTarget));
 
                     cumulativeErrorPOS = 0.0;
@@ -119,6 +119,7 @@ public class MMkPTuningCommand {
             tunedkV = kVTuningCommand.getKV();
             tunedkA = mMkATuningCommand.getKA();
             tunedkG = kGTuningCommandPOS.getKG();
+            tunedkD = 0.0;
             tunedCruiseV = mmCruiseVTuningCommand.getCruiseVelocity();
             tunedMaxAcc = mmMaxAccTuningCommand.getMaxAcc();   
 
