@@ -82,6 +82,7 @@ public class MMkPTuningCommand {
                     if(isAtTarget(motorExecute, lowTarget, gearRatio) || timeOutTimer.hasElapsed(3.0)){ //Change duration if needed
                         currentState = State.EVALUATING;
                     }
+                    break;
 
                 case EVALUATING:
                     if(cumulativeErrorPOS < lowestScorePOS && cumulativeErrorVEL < lowestScoreVEL){
