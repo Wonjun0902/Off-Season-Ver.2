@@ -132,6 +132,25 @@ public class LazyTunableTalon implements TunableMotor{
     }
 
     @Override 
+    public void configureMotionMagicExpo(double kS, double kV, double kA, double kG, double kP, double kD, double expokA, double expokV, GravityTypeValue gravityTypeValue){
+        TalonFXConfiguration config = new TalonFXConfiguration();
+
+        config.Slot0.kP = kP;
+        config.Slot0.kD = kD;
+        config.Slot0.kI = 0.0;
+        config.Slot0.kS = kS;
+        config.Slot0.kV = kV;
+        config.Slot0.kA = kA;
+        config.Slot0.kG = kG;
+
+        config.MotionMagic.MotionMagicCruiseVelocity = 0.0; //Optional for MMExpo  
+        config.MotionMagic.MotionMagicExpo_kA = expokA;
+        config.MotionMagic.MotionMagicExpo_kV = expokV;
+
+        this.motor.getConfigurator().apply(config);
+    }
+
+    @Override 
     public Angle getReferencePosition(){
         return Rotations.of(this.motor.getClosedLoopReference().getValueAsDouble());
     }

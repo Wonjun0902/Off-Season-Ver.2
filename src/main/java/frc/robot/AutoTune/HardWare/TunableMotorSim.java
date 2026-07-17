@@ -13,6 +13,7 @@ import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Amps;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 
 public class TunableMotorSim implements TunableMotor{
@@ -86,6 +87,9 @@ public class TunableMotorSim implements TunableMotor{
 
     @Override 
     public void configureMotionMagic(double kS, double kV, double kA, double kG, double kP, double kD, double cruiseV, double maxAcc, GravityTypeValue gravityTypeValue){}
+
+    @Override 
+    public void configureMotionMagicExpo(double kS, double kV, double kA, double kG, double kP, double kD, double expokA, double expokV, GravityTypeValue gravityTypeValue){}
 
     @Override
     public Angle getReferencePosition(){

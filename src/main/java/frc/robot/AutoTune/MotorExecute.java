@@ -143,6 +143,10 @@ public class MotorExecute {
         m_motor.configureMotionMagic(kS,kV, kA, kG, kP, kD, cruiseV, maxAcc, gravityTypeValue);
     }
 
+    public void configureMotionMagicExpo(double kS, double kV, double kA, double kG, double kP, double kD, double expokA, double expokV, GravityTypeValue gravityTypeValue){
+        m_motor.configureMotionMagicExpo(kS, kV, kA, kG, kP, kD, expokA, expokV, gravityTypeValue);
+    }
+
     public Angle getReferencePosition(double gearRatio){
         Angle currentRef = m_motor.getReferencePosition();
         return currentRef.div(gearRatio);
