@@ -33,7 +33,7 @@ public class MMkPTuningCommand {
 
     //Class Variables to be changed inside the loop
     private State currentState = State.INIT_HIGH;
-    private double testkP = 0.0;
+    private double testkP = 0.0; //Change later for optimized value
     private double bestkP = 0.0;
     private double lowestScore = Double.MAX_VALUE;
     private double cumulativeErrorPOS = 0.0;
