@@ -14,9 +14,71 @@ import edu.wpi.first.wpilibj2.command.Commands;
 //If you don't consider that, the motor will likely stop due to the safety check of the setMotorVoltagePOS method
 public class kGTuningCommandPOS{
 
-    private double currentVolts;
-    public double tunedkG = 0.0;
+    private enum State{
+        INIT_SETUP, MOVING_SETUP, TUNING
+    }
+
+    private State currentState = State.INIT_SETUP;
     private double risingSign;
+    private double currentSign;
+    private double minimumVolts = 0.0;
+    private double tunedkG;
+    private Timer riseTimeOutTimer = new Timer();
+    private Timer setTimeOutTimer = new Timer();
+
+    public Command kGTuningCommand(double setUpVolts, double kGIncrement, double riseDuration, double gearRatio, MotorExecute motorExecute){
+        return Commands.run(() -> {
+            switch(currentState){
+                case INIT_SETUP:
+                    riseTimeOutTimer.restart();
+                    motorExecute.setMotorVoltagePOS(setUpVolts);
+                    risingSign = getSign(motorExecute, gearRatio);
+                    currentState = State.MOVING_SETUP;
+                    break;
+
+                case MOVING_SETUP:
+                    if(riseTimeOutTimer.hasElapsed(riseDuration)){
+                        motorExecute.setMotorVoltagePOS(minimumVolts);
+                        currentState = State.TUNING;
+                    }
+                    break;
+
+                case TUNING:
+                    setTimeOutTimer.restart();;
+                    motorExecute.setMotorVoltagePOS(minimumVolts);
+                    currentSign = getSign(motorExecute, gearRatio);
+                    if(setTimeOutTimer.hasElapsed(0.5)){
+                        if(currentSign != risingSign){
+                            minimumVolts += kGIncrement;
+                        }
+                        currentState = State.TUNING;
+                    }
+                    break;
+            }
+        })
+        .beforeStarting(() -> {
+            minimumVolts = 3.0; //Change to optimized value 
+            currentState = State.INIT_SETUP;
+        })
+        .until(() -> {
+            return currentSign == risingSign;
+        })
+        .finallyDo((interrupted) -> {
+            if(!interrupted){
+                tunedkG = minimumVolts;
+            }
+            motorExecute.stopMotor();
+        });
+    }
+
+    //Return -1 if negative, +1 if positive, 0 if idle
+    public double getSign(MotorExecute motorExecute, double gearRatio){
+        AngularVelocity AngularVelocity = motorExecute.getMotorSpeed(gearRatio);
+        double SpeedDouble = AngularVelocity.in(RotationsPerSecond);
+        return Math.signum(SpeedDouble);
+    }
+
+    private double currentVolts;
     private boolean isOvershoot;
     private Timer riseTimer = new Timer();
     private Timer rampTimer = new Timer();
