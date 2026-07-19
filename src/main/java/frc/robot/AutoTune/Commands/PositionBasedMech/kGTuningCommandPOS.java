@@ -66,6 +66,8 @@ public class kGTuningCommandPOS{
         .finallyDo((interrupted) -> {
             if(!interrupted){
                 tunedkG = minimumVolts;
+
+                SmartDashboard.putNumber("kG Value", tunedkG);
             }
             motorExecute.stopMotor();
         });
