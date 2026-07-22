@@ -1,5 +1,140 @@
 package frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagicExpo;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.AutoTune.MotorExecute;
+import frc.robot.AutoTune.Commands.PositionBasedMech.kGTuningCommandPOS;
+import frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagic.MMCruiseVTuningCommand;
+import frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagic.MMMaxAccTuningCommand;
+import frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagic.MMkATuningCommand;
+import frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagic.MMkPTuningCommand;
+import frc.robot.AutoTune.Commands.StandardPID.kSTuningCommand;
+import frc.robot.AutoTune.Commands.StandardPID.kVTuningCommand;
+
+import com.ctre.phoenix6.signals.GravityTypeValue;
+
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Commands;
+
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 public class MMExpokDTuningCommand {
 
+    //Define States
+    private enum State{
+        INIT_HIGH, MOVING_HIGH, INIT_LOW, MOVING_LOW, EVALUATING
+    }
+
+    //Class Variables to be changed inside the loop 
+    private State currentState = State.INIT_HIGH;
+    private double testkD = 0.0;
+    private double bestkD = 0.0;
+    private double lowestScore = Double.MAX_VALUE;
+    private double cumulativeErrorPOS = 0.0;
+    private double cumulativeErrorVEL = 0.0;
+    private double tunedkS, tunedkV, tunedkA, tunedkG, tunedExpokA, tunedExpokV, tunedkP;
+
+    private Timer timeOutTimer = new Timer();
+
+    public Command mmkDTuningCommand(double kDIncrement, double lowTarget, double highTarget, double maxkD, double gearRatio,
+        GravityTypeValue gravityType, MotorExecute motorExecute,
+        MMCruiseVTuningCommand mmCruiseVTuningCommand,
+        MMMaxAccTuningCommand mmMaxAccTuningCommand,
+        MMkATuningCommand mMkATuningCommand,
+        kSTuningCommand kSTuningCommand,
+        kVTuningCommand kVTuningCommand,
+        kGTuningCommandPOS kGTuningCommandPOS, 
+        MMkPTuningCommand mMkPTuningCommand){
+
+        return Commands.run(() -> {
+            switch(currentState){
+                case INIT_HIGH:
+                    motorExecute.configureMotionMagicExpo(tunedkS, tunedkV, tunedkA, tunedkG, tunedkP, testkD, tunedExpokA, tunedExpokV, gravityType);
+                    motorExecute.setMMExpoTarget(Rotations.of(highTarget));
+                    cumulativeErrorPOS = 0.0;
+                    cumulativeErrorVEL = 0.0;
+                    currentState = State.MOVING_HIGH;
+                    timeOutTimer.restart();
+                    break;
+
+                case MOVING_HIGH:
+                    cumulateError(motorExecute, gearRatio);
+                    if(isReachedTarget(motorExecute, gearRatio, highTarget) || timeOutTimer.hasElapsed(3.0)){
+                        currentState = State.INIT_LOW;
+                    }
+                    break;
+
+                case INIT_LOW:
+                    motorExecute.setMMExpoTarget(Rotations.of(lowTarget));
+                    currentState = State.MOVING_LOW;
+                    timeOutTimer.restart();
+                    break;
+
+                case MOVING_LOW:
+                    cumulateError(motorExecute, gearRatio);
+                    if(isReachedTarget(motorExecute, gearRatio, lowTarget) || timeOutTimer.hasElapsed(3.0)){
+                        currentState = State.EVALUATING;
+                    }
+                    break;
+
+                case EVALUATING:
+                    double totalScore = cumulativeErrorPOS + cumulativeErrorVEL;
+                    if(totalScore < lowestScore){
+                        lowestScore = totalScore;
+                        bestkD = testkD;
+                    }
+                    testkD += kDIncrement;
+                    currentState = State.INIT_HIGH;
+                    break;
+            }
+        })
+        .beforeStarting(() -> {
+            tunedkS = kSTuningCommand.getKS();
+            tunedkV = kVTuningCommand.getKV();
+            tunedkA = mMkATuningCommand.getKA();
+            tunedkG = kGTuningCommandPOS.getKG();
+            tunedExpokA = tunedkA;
+            tunedExpokV = tunedkV;
+            tunedkP = mMkPTuningCommand.getMMkP();
+
+            testkD = kDIncrement;
+            bestkD = 0.0;
+            lowestScore = Double.MAX_VALUE;
+            currentState = State.INIT_HIGH;
+        })
+        .until(() -> {
+            return testkD > maxkD;
+        })
+        .finallyDo((interrupted) -> {
+            motorExecute.stopMotor();
+
+            if(!interrupted){
+                SmartDashboard.putNumber("MM kD Value: ", bestkD);
+            }
+        });
+
+    }
+
+    public void cumulateError(MotorExecute motorExecute, double gearRatio){
+        double referencePOS = motorExecute.getReferencePosition(gearRatio).in(Rotations);
+        double actualPOS = motorExecute.getMotorPosition(gearRatio).in(Rotations);
+
+        double referenceSpeed = motorExecute.getReferenceSpeed(gearRatio).in(RotationsPerSecond);
+        double actualSpeed = motorExecute.getMotorSpeed(gearRatio).in(RotationsPerSecond);
+
+        cumulativeErrorPOS += Math.abs(referencePOS - actualPOS);
+        cumulativeErrorVEL += Math.abs(referenceSpeed - actualSpeed);
+    }
+
+    public boolean isReachedTarget(MotorExecute motorExecute, double gearRatio, double target){
+        double currentPOS = motorExecute.getMotorPosition(gearRatio).in(Rotations);
+        double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RotationsPerSecond);
+
+        return Math.abs(target - currentPOS) < 0.05 && Math.abs(currentSpeed) < 0.05;
+    }
+
+    public double getMMkD(){
+        return bestkD;
+    }
 }
