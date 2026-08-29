@@ -19,7 +19,11 @@ public class MMkDTuningCommand {
 
     //Define States
     private enum State{
-        INIT_HIGH, MOVING_HIGH, INIT_LOW, MOVING_LOW, EVALUATING
+        INIT_HIGH, 
+        MOVING_HIGH, 
+        INIT_LOW, 
+        MOVING_LOW, 
+        EVALUATING
     }
 
     //Class Variables to be changed inside the loop 
