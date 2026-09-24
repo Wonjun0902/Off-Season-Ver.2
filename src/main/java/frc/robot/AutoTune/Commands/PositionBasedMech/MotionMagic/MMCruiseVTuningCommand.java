@@ -1,3 +1,8 @@
+// For now, we don't want to use this code because the Cruise Velocity depends on different situations 
+// that we can't analyze in the code. It is better to set it by ourselves
+
+
+
 // package frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagic;
 
 // import edu.wpi.first.wpilibj2.command.Command;
