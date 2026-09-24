@@ -3,7 +3,6 @@ package frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagicExpo;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.AutoTune.MotorExecute;
 import frc.robot.AutoTune.Commands.PositionBasedMech.kGTuningCommandPOS;
-import frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagic.MMCruiseVTuningCommand;
 import frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagic.MMMaxAccTuningCommand;
 import frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagic.MMkATuningCommand;
 import frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagic.MMkPTuningCommand;
@@ -39,7 +38,6 @@ public class MMExpokDTuningCommand {
 
     public Command mmkDTuningCommand(double kDIncrement, double lowTarget, double highTarget, double maxkD, double gearRatio,
         GravityTypeValue gravityType, MotorExecute motorExecute,
-        MMCruiseVTuningCommand mmCruiseVTuningCommand,
         MMMaxAccTuningCommand mmMaxAccTuningCommand,
         MMkATuningCommand mMkATuningCommand,
         kSTuningCommand kSTuningCommand,

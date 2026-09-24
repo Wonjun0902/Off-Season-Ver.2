@@ -39,7 +39,7 @@ public class MMkDTuningCommand {
 
     public Command mmkDTuningCommand(double kDIncrement, double lowTarget, double highTarget, double maxkD, double gearRatio,
         GravityTypeValue gravityType, MotorExecute motorExecute,
-        MMCruiseVTuningCommand mmCruiseVTuningCommand,
+        double mmCruiseVTuningCommand,
         MMMaxAccTuningCommand mmMaxAccTuningCommand,
         MMkATuningCommand mMkATuningCommand,
         kSTuningCommand kSTuningCommand,
@@ -94,7 +94,7 @@ public class MMkDTuningCommand {
             tunedkV = kVTuningCommand.getKV();
             tunedkA = mMkATuningCommand.getKA();
             tunedkG = kGTuningCommandPOS.getKG();
-            tunedCruiseV = mmCruiseVTuningCommand.getCruiseVelocity();
+            tunedCruiseV = mmCruiseVTuningCommand;
             tunedMaxAcc = mmMaxAccTuningCommand.getMaxAcc();
             tunedkP = mMkPTuningCommand.getMMkP();
 

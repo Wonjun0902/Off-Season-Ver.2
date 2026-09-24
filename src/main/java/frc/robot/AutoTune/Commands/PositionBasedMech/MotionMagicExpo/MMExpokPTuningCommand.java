@@ -3,8 +3,6 @@ package frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagicExpo;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.AutoTune.MotorExecute;
 import frc.robot.AutoTune.Commands.PositionBasedMech.kGTuningCommandPOS;
-import frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagic.MMCruiseVTuningCommand;
-import frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagic.MMMaxAccTuningCommand;
 import frc.robot.AutoTune.Commands.PositionBasedMech.MotionMagic.MMkATuningCommand;
 import frc.robot.AutoTune.Commands.StandardPID.kSTuningCommand;
 import frc.robot.AutoTune.Commands.StandardPID.kVTuningCommand;
