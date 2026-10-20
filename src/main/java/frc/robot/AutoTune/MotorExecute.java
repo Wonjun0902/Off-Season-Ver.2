@@ -41,6 +41,7 @@ public class MotorExecute {
      */
 
     // Voltage Control for Position Mechanism Subsystems
+    // Prolly not use this for normal situations but it can be safer maybe. 
     public void setMotorVoltagePOS(double volts){
         //1. Check if the hard limit switch is on
         if(m_hardLimitSwitch != null && m_hardLimitSwitch.get()){
