@@ -23,8 +23,7 @@ public class kVTuningCommand{
     private double currentVoltage;
     private double tunedkV;
     public Command kVTuningCommand(AngularVelocity targetSpeed, double voltsPerLoop, double gearRatio, MotorExecute motorExecute, kSTuningCommand kSTuningCommand){
-        //Initialize the volts for 0.0 at the start 
-        currentVoltage = 0.0;
+        
         return Commands.run(
           () -> {
             //1. Increment Voltage
