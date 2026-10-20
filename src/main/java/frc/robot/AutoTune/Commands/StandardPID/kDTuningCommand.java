@@ -35,7 +35,7 @@ public class kDTuningCommand{
      * @param duration test duration for accuracy 
      * @param maxkD for jittering 
      */
-    public Command kDTuningCommand(double kDIncrement, double targetSpeed, double duration, double maxkD, double gearRatio){
+    public Command kDTuningCommand(double kDIncrement, double targetSpeed, double duration, double maxkD, double gearRatio, MotorExecute motorExecute){
         return Commands.run(() -> {
             double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RadiansPerSecond);
 
