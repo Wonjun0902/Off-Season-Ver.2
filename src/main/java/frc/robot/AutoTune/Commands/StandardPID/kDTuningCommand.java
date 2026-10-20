@@ -12,6 +12,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 public class kDTuningCommand{
 
     private PIDController pidController;
+    private kPTuningCommand kPTuningCommand;
+    private kSTuningCommand kSTuningCommand;
+    private kVTuningCommand kVTuningCommand;
+    private MotorExecute motorExecute;
+
+    private double tunedkP = kPTuningCommand.getkP();
 
     private double testkD = 0.0;
     private double bestkD = 0.0;
@@ -29,14 +35,9 @@ public class kDTuningCommand{
      * @param duration test duration for accuracy 
      * @param maxkD for jittering 
      */
-    public Command kDTuningCommand(double kDIncrement, double targetSpeed, double duration, double maxkD, double gearRatio, kPTuningCommand kPTuningCommand, kSTuningCommand kSTuningCommand, kVTuningCommand kVTuningCommand, MotorExecute motorExecute){
+    public Command kDTuningCommand(double kDIncrement, double targetSpeed, double duration, double maxkD, double gearRatio){
         return Commands.run(() -> {
-            //1. Calculate for the current error of the speed
             double currentSpeed = motorExecute.getMotorSpeed(gearRatio).in(RadiansPerSecond);
-            double absError = Math.abs(currentSpeed - targetSpeed);
-
-            //2. Adds up the absolute errors to the cumulative error 
-            cumulativeError += absError;
 
             //Apply PID voltage and FF voltage 
             double pidVoltage = pidController.calculate(currentSpeed, targetSpeed);
@@ -48,6 +49,11 @@ public class kDTuningCommand{
             motorExecute.setMotorVoltage(pidVoltage + ffVoltage);
 
             double tunedkP = kPTuningCommand.getkP();
+
+            double absError = Math.abs(currentSpeed - targetSpeed);
+            if(stepTimer.hasElapsed(duration - 1)) {
+                cumulativeError = Math.max(cumulativeError, absError);
+            }
 
             //Scoring 
             if(stepTimer.hasElapsed(duration)){
@@ -66,8 +72,6 @@ public class kDTuningCommand{
             }
     })
     .beforeStarting(() -> {
-        double tunedkP = kPTuningCommand.getkP();
-
         testkD = kDIncrement;
         pidController.reset();
         pidController.setD(testkD);
