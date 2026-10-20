@@ -60,7 +60,7 @@ public class AutoCalibratorCombiner extends SubsystemBase{
             Commands.waitSeconds(1), //TODO: Change to real values after testing 
             
             //4. Tune kD
-            kDTuningCommand.kDTuningCommand(0.01, targetSpeedRAD, 2, 1, gearRatio, kPTuningCommand, kSTuningCommand, kVTuningCommand, motor), //TODO: Change to real values after testing 
+            kDTuningCommand.kDTuningCommand(0.01, targetSpeedRAD, 2, 1, gearRatio, motor), //TODO: Change to real values after testing 
             Commands.waitSeconds(1)//TODO: Change to real values after testing 
 
         );
